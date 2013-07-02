@@ -1,0 +1,127 @@
+"Games"
+{
+	"left4dead2"
+	{
+		"Offsets"
+		{			
+			"MarkerDivisor"
+			{
+				"linux"	"235"
+			}
+			
+			"StatsDivisor"
+			{
+				"linux"	"843"
+			}
+			
+			"PerPlayerCompletionDivisor"
+			{
+				"linux"	"80"
+			}
+		}
+		"Signatures"
+		{
+			"CTerrorGameRules_RecomputeVersusCompletion"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules25RecomputeVersusCompletionEb"
+			}
+
+			/*
+			 *	const Vector& CBaseEntity::GetAbsOrigin(void)
+			 */
+            "CBaseEntity_GetAbsOrigin"
+            {
+				"library"	"server"
+				"linux"		"@_ZNK11CBaseEntity12GetAbsOriginEv"
+            }
+
+			/*
+			 *	CDirectorVersusMode::EndVersusModeRound(bool)
+			 */
+			"EndVersusModeRound"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CDirectorVersusMode18EndVersusModeRoundEb"
+			}
+			
+			/*
+			 *	CGameRulesProxy::NotifyNetworkStateChanged(void)
+			 */
+			"CGameRulesProxy_NotifyNetworkStateChanged"
+			{
+				"library"	"server"
+				"linux"		"@_ZN15CGameRulesProxy25NotifyNetworkStateChangedEv"
+			}
+
+			/*
+			 *	CTerrorPlayer::OnRevivedByDefibrillator(CTerrorPlayer* who_use_defib, CSurvivorDeathModel *)
+			 */
+			"CTerrorPlayer_OnRevivedByDefibrillator"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer24OnRevivedByDefibrillatorEPS_P19CSurvivorDeathModel"
+			}
+			
+			"g_pGameRules"
+			{
+				"library"	"server"
+				"linux"		"@g_pGameRules"
+			}
+			
+			"g_pDirector"
+			{
+				"library"	"server"
+				"linux"		"@TheDirector"
+			}
+			
+			"CTerrorGameRules_GetVersusCompletion"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules19GetVersusCompletionEP13CTerrorPlayer"
+			}
+			
+			"CTerrorGameRules_GetVersusCompletionByCharacter"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK16CTerrorGameRules31GetVersusCompletionPerCharacterE21SurvivorCharacterTypei"
+			}
+			
+			"CDirector_AreTeamsFlipped"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK9CDirector15AreTeamsFlippedEv"
+			}
+			
+			"CDirector_UpdateMarkersReached"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CDirectorVersusMode20UpdateMarkersReachedEv"
+			}
+			
+			"CL4DGameStats_AddSurvivorStats"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CL4DGameStats16AddSurvivorStatsEb"
+			}
+			
+			"DIV_CODE_UpdateMarkersReached"
+			{
+				"library"	"server"
+				"linux"		"\xE8\x35\x69\xBA\xFF\xC1\xF8\x02"
+			}
+			
+			"DIV_CODE_AddSurvivorStats"
+			{
+				"library"	"server"
+				"linux"		"\xE8\xF1\x9C\xB7\xFF\xC1\xF8\x02"
+			}
+			
+			"DIV_CODE_GetVersusCompletion"
+			{
+				"library"	"server"
+				"linux"		"\x8B\xB8\x90\x04\x00\x00\xC1\xFF\x02"
+			}
+		}
+	}
+}
