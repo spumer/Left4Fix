@@ -31,11 +31,13 @@
 
 #include "extension.h"
 #include <igameevents.h>
+// #include <unistd.h>
 
 #include "codepatch/patchmanager.h"
 #include "codepatch/autopatch.h"
-#include "codepatch/score_code_8.h"
+#include "codepatch/score_code.h"
  
+#include "detours/end_versus_mode_round.h"
 #include "detours/on_get_completion_by_character.h"
 #include "detours/on_recompute_versus_completion.h"
 #include "detours/on_revived_by_defib.h"
@@ -60,6 +62,7 @@ void **g_pDirector = NULL;
 
 namespace Detours {
 	int g_totalResult = 0;
+	bool g_bRoundEnd_Pre = false;
 	death_info_t g_players[32];		// init in SDK_OnLoad()
 	uint32_t g_scores[33] = {0};
 	bool (*AreTeamsFlipped)(void*);
@@ -122,7 +125,7 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 		return false;
 	}
 	
-	// playerhelpers->AddClientListener(&g_Left4Fix);
+	playerhelpers->AddClientListener(&g_Left4Fix);
 	gameevents->AddListener(&g_OnPlayerDeath, "player_death", true);
 	gameevents->AddListener(&g_OnRoundStart,  "round_start",  true);
 	
@@ -138,6 +141,38 @@ void Left4Fix::SDK_OnAllLoaded() {
 	g_PatchManager.Register(new AutoPatch<Detours::RecomputeVersusCompletion>());
 	g_PatchManager.Register(new AutoPatch<Detours::OnGetCompletionByCharacter>());
 	g_PatchManager.Register(new AutoPatch<Detours::RevivedByDefib>());
+	g_PatchManager.Register(new AutoPatch<Detours::l4fx_EndVersusModeRound>());
+}
+
+/*
+inline unsigned int fixMod(unsigned int score) {
+	return score - (score % TEAM_SIZE);
+}*/
+
+void Left4Fix::OnServerActivated(int max_clients) {
+	// while( g_bRoundEnd_Pre ) sleep(1);
+	memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
+	memset(g_players, 0, sizeof(g_players));
+	memset(g_scores, 0, sizeof(g_scores));
+	__sync_and_and_fetch(&g_totalResult, 0); // g_totalResult = 0;
+	
+	/**
+	* Fix the Max Completion Score
+	*/
+	
+	/*
+	while( *g_pGameRules == NULL ) {
+		g_pSM->LogError(myself, "` not init, max score not changed.");
+		return;
+	}
+	
+	unsigned int *maxCompletion = (unsigned int *)((unsigned char *)(*g_pGameRules) + 3560);
+	
+	if(*maxCompletion % TEAM_SIZE) {
+		g_pSM->LogMessage(myself, "Try patch max score: %d", *maxCompletion);
+		unsigned int score = ((*maxCompletion) * TEAM_SIZE) / 8;
+		*maxCompletion = fixMod(score);
+	}*/
 }
 
 void Left4Fix::SDK_OnUnload() {
@@ -157,27 +192,3 @@ bool Left4Fix::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool
 bool Left4Fix::SDK_OnMetamodUnload(char *error, size_t maxlength) {
 	return true;
 }
-
-/*
-inline unsigned int fixMod(unsigned int score) {
-	return score - (score % TEAM_SIZE);
-}*/
-
-/**
-* Fix the Max Completion Score
-*//*
-
-void Left4Fix::OnServerActivated(int max_clients) {
-	while( *g_pGameRules == NULL ) {
-		g_pSM->LogError(myself, "g_pGameRules not init, max score not changed.");
-		return;
-	}
-	
-	unsigned int *maxCompletion = (unsigned int *)((unsigned char *)(*g_pGameRules) + 1168);
-	
-	if(*maxCompletion % TEAM_SIZE) {
-		g_pSM->LogMessage(myself, "Try patch max score: %d", *maxCompletion);
-		unsigned int score = ((*maxCompletion) * TEAM_SIZE) / 8;
-		*maxCompletion = fixMod(score);
-	}
-}*/

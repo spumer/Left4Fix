@@ -34,18 +34,24 @@
 #include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
 
-// TODO: Replace sig search to offsets, copy original by copy_bytes and restore when unpatch.
+#define OP_CALL 0xE8
+#define OP_CALL_SIZE 5
 
-unsigned char UpdateMarkersReached_orig[]  = { 0xE8, 0x35, 0x69, 0xBA, 0xFF, 0xC1, 0xF8, 0x02 };
-unsigned char UpdateMarkersReached_patch[] = { 0x8B, 0x80, 0x90, 0x04, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1 };
+#define OP_MOV 0xA1
+#define OP_MOV_SIZE 5
 
-unsigned char AddSurvivorStats_orig[]  = { 0xE8, 0xF1, 0x9C, 0xB7, 0xFF, 0xC1, 0xF8, 0x02 };
-unsigned char AddSurvivorStats_patch[] = { 0x8B, 0x80, 0x90, 0x04, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1 };
+// TODO: Create CUT/PASTE masks functions for wrap instructions inside my patch
 
-unsigned char GetVersusCompletion_orig[]  = { 0x8B, 0xB8, 0x90, 0x04, 0x00, 0x00, 0xC1, 0xFF, 0x02 };
-unsigned char GetVersusCompletion_patch[] = { 0x8B, 0x80, 0x90, 0x04, 0x00, 0x00, 0x31, 0xD2, 0xBF, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF7, 0x89, 0xC7 };
+unsigned char UpdateMarkersReached_orig[]  = { 0xE8, 0x2A, 0x2A, 0x2A, 0x2A, 0xF3, 0x0F, 0x2A, 0x2A, 0x2A, 0xC1, 0xF8, 0x02 };
+unsigned char UpdateMarkersReached_patch[] = { 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xBB, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF3 };
 
-#ifdef _DEBUG
+unsigned char AddSurvivorStats_orig[]  = { 0xE8, 0x2A, 0x2A, 0x2A, 0x2A, 0xC1, 0xF8, 0x02 };
+unsigned char AddSurvivorStats_patch[] = { 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1 };
+
+unsigned char GetVersusCompletion_orig[]  = { 0x8B, 0x55, 0x2A, 0xA1, 0x2A, 0x2A, 0x2A, 0x2A, 0x8B, 0xBA, 0xE8, 0x0D, 0x00, 0x00, 0x89, 0x2A, 0x2A, 0xC1, 0xFF, 0x02 };
+unsigned char GetVersusCompletion_patch[] = { 0x8B, 0x45, 0x08, 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xBF, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF7, 0x89, 0xC7 };
+
+#ifdef DEBUG
 void memDump(unsigned char *pAddr, size_t len) {
 	g_pSmmAPI->ConPrintf("Start dump at: %p\n", pAddr);
 	size_t llen = len;
@@ -69,24 +75,39 @@ void ScoreCode::Patch() {
 	
 	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
 	
+	// prepare the trampoline
 	m_injectMarker = (unsigned char *)sengine->AllocatePageMemory(sizeof(UpdateMarkersReached_patch) + OP_JMP_SIZE);
 	copy_bytes(UpdateMarkersReached_patch, m_injectMarker, sizeof(UpdateMarkersReached_patch));
-	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + sizeof(UpdateMarkersReached_orig));
+	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_CALL_SIZE);	
+	// copy original code to our buffer
 	SetMemPatchable(m_pMarkers, sizeof(UpdateMarkersReached_orig));
+	copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig));
+	// inject jmp to trampoline and nop some bytes after target instruction
 	inject_jmp(m_pMarkers, m_injectMarker);
-	fill_nop(m_pMarkers + OP_JMP_SIZE, sizeof(UpdateMarkersReached_orig) - OP_JMP_SIZE);
+	fill_nop(m_pMarkers + sizeof(UpdateMarkersReached_orig) - 3, 3);
 	
+	// prepare the trampoline
 	m_injectStats = (unsigned char *)sengine->AllocatePageMemory(sizeof(AddSurvivorStats_patch) + OP_JMP_SIZE);
 	copy_bytes(AddSurvivorStats_patch, m_injectStats, sizeof(AddSurvivorStats_patch));
 	inject_jmp(m_injectStats + sizeof(AddSurvivorStats_patch), m_pL4DStats + sizeof(AddSurvivorStats_orig));	
+	// copy original code to our buffer
 	SetMemPatchable(m_pL4DStats, sizeof(AddSurvivorStats_orig));
+	copy_bytes(m_pL4DStats, AddSurvivorStats_orig, sizeof(AddSurvivorStats_orig));
+	// inject jmp to trampoline
 	inject_jmp(m_pL4DStats, m_injectStats);
 	fill_nop(m_pL4DStats + OP_JMP_SIZE, sizeof(AddSurvivorStats_orig) - OP_JMP_SIZE);
 	
+	// prepare the trampoline
 	m_injectCompl = (unsigned char *)sengine->AllocatePageMemory(sizeof(GetVersusCompletion_patch) + OP_JMP_SIZE);
-	copy_bytes(GetVersusCompletion_patch, m_injectCompl, sizeof(GetVersusCompletion_patch));
-	inject_jmp(m_injectCompl + sizeof(GetVersusCompletion_patch), m_pCompletion + sizeof(GetVersusCompletion_orig));	
+	unsigned char *pInjectEnd = m_injectCompl;
+	copy_bytes(GetVersusCompletion_patch, m_injectCompl, sizeof(GetVersusCompletion_patch)); pInjectEnd += sizeof(GetVersusCompletion_patch);
+	copy_bytes(m_pCompletion + 3, pInjectEnd, OP_MOV_SIZE); pInjectEnd += OP_MOV_SIZE;
+	copy_bytes(m_pCompletion + sizeof(GetVersusCompletion_orig) - 6, pInjectEnd, 3); pInjectEnd += 3;
+	inject_jmp(pInjectEnd, m_pCompletion + sizeof(GetVersusCompletion_orig));	
+	// copy original code to our buffer
 	SetMemPatchable(m_pCompletion, sizeof(GetVersusCompletion_orig));
+	copy_bytes(m_pCompletion, GetVersusCompletion_orig, sizeof(GetVersusCompletion_orig));
+	// inject jmp to trampoline
 	inject_jmp(m_pCompletion, m_injectCompl);
 	fill_nop(m_pCompletion + OP_JMP_SIZE, sizeof(GetVersusCompletion_orig) - OP_JMP_SIZE);
 	

@@ -48,9 +48,16 @@
 // #include <iplayerinfo.h>
 #include <vector.h> // for Vector class
 #include <stdint.h>
-#include <string.h> // for memset()
+// #include <string.h> // for memset()
 
 #define GET_TEAM(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->GetTeamIndex()
+
+// semi-atomic-workaround
+#define memzero(P, S) \
+for(uint8_t* p = (uint8_t*)(P); static_cast<size_t>(p-(uint8_t*)(P)) < (S) ; ++p) \
+	__sync_and_and_fetch(p, 0);
+
+#define memset(P, V, S) memzero(P, S)
 
 typedef struct {
 	Vector m_Pos;
@@ -61,7 +68,7 @@ typedef struct {
  * @brief Sample implementation of the SDK Extension.
  * Note: Uncomment one of the pre-defined virtual functions in order to use it.
  */
-class Left4Fix : public SDKExtension//, public IClientListener
+class Left4Fix : public SDKExtension, public IClientListener
 {
 public:
 	/**
@@ -85,7 +92,7 @@ public:
 	 */
 	virtual void SDK_OnAllLoaded();
 	
-	//virtual void OnServerActivated(int max_clients);
+	virtual void OnServerActivated(int max_clients);
 	
 	/**
 	 * @brief Called when the pause state is changed.
@@ -144,7 +151,7 @@ extern ICvar *icvar;
 extern CGlobalVars *gpGlobals;
 
 namespace Detours {
-	// extern bool g_bRoundEnd_Pre;
+	extern bool g_bRoundEnd_Pre;
 	extern int g_totalResult;
 	extern death_info_t g_players[32];
 	extern uint32_t g_scores[33];

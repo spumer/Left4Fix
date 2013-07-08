@@ -99,7 +99,7 @@ namespace Detours
 			if(pPlayer == NULL) continue;
 			
 			// if(GET_TEAM(client) == 2) {
-			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 576) == 2 ) {		// Get player team index
+			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// Get player team index
 				if(IsDead(pPlayer)) continue;
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;

@@ -28,17 +28,35 @@
  *
  * Version: $Id$
  */
-#ifndef _INCLUDE_SOURCEMOD_EVENT_ROUND_START_H_
-#define _INCLUDE_SOURCEMOD_EVENT_ROUND_START_H_
-#include "extension.h"
 
-class RoundStart : public IGameEventListener2
+#ifndef _INCLUDE_SOURCEMOD_DETOUR_END_VERSUS_MODE_ROUND_H_
+#define _INCLUDE_SOURCEMOD_DETOUR_END_VERSUS_MODE_ROUND_H_
+
+#include "detour_template.h"
+
+namespace Detours {
+
+class l4fx_EndVersusModeRound;
+typedef void (l4fx_EndVersusModeRound::*EndVersusModeRoundFunc)(bool);
+
+class l4fx_EndVersusModeRound : public DetourTemplate<EndVersusModeRoundFunc, l4fx_EndVersusModeRound>
 {
-	int GetEventDebugID(void) { return EVENT_DEBUG_ID_INIT; }
-	void FireGameEvent(IGameEvent* pEvent)
+private: //note: implementation of DetourTemplate abstracts
+
+	void OnEndVersusModeRound(bool countSurvivors);
+
+	// get the signature name from the game conf
+	virtual const char *GetSignatureName()
 	{
-		Detours::g_bRoundEnd_Pre = false;
+		return "EndVersusModeRound";
+	}
+
+	//notify our patch system which function should be used as the detour
+	virtual EndVersusModeRoundFunc GetDetour()
+	{
+		return &l4fx_EndVersusModeRound::OnEndVersusModeRound;
 	}
 };
 
+};
 #endif

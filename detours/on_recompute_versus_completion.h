@@ -60,7 +60,7 @@ private: //note: implementation of DetourTemplate abstracts
 	
 	static int getHighest(const void* p1, const void* p2) { return *(int*)p2 - *(int*)p1; }
 	
-	static bool IsDead(CBaseEntity *pPlayer) { return *(bool*)((unsigned char*)pPlayer+252); }
+	static bool IsDead(CBaseEntity *pPlayer) { return *(bool*)((unsigned char*)pPlayer+260); }
 };
 
 };

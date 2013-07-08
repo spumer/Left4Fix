@@ -28,17 +28,22 @@
  *
  * Version: $Id$
  */
-#ifndef _INCLUDE_SOURCEMOD_EVENT_ROUND_START_H_
-#define _INCLUDE_SOURCEMOD_EVENT_ROUND_START_H_
+
+#include "end_versus_mode_round.h"
 #include "extension.h"
 
-class RoundStart : public IGameEventListener2
+namespace Detours
 {
-	int GetEventDebugID(void) { return EVENT_DEBUG_ID_INIT; }
-	void FireGameEvent(IGameEvent* pEvent)
+	void l4fx_EndVersusModeRound::OnEndVersusModeRound(bool countSurvivors)
 	{
-		Detours::g_bRoundEnd_Pre = false;
+		if(g_bRoundEnd_Pre) return;
+		g_bRoundEnd_Pre = true;
+		(this->*(GetTrampoline()))(countSurvivors);
+		
+		memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
+		memset(g_players, 0, sizeof(g_players));
+		memset(g_scores, 0, sizeof(g_scores));
+		__sync_and_and_fetch(&g_totalResult, 0); // g_totalResult = 0;
+		return;
 	}
 };
-
-#endif

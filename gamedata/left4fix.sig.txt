@@ -6,17 +6,17 @@
 		{			
 			"MarkerDivisor"
 			{
-				"linux"	"235"
+				"linux"	"112"
 			}
 			
 			"StatsDivisor"
 			{
-				"linux"	"843"
+				"linux"	"409"
 			}
 			
 			"PerPlayerCompletionDivisor"
 			{
-				"linux"	"80"
+				"linux"	"75"
 			}
 		}
 		"Signatures"
@@ -108,19 +108,19 @@
 			"DIV_CODE_UpdateMarkersReached"
 			{
 				"library"	"server"
-				"linux"		"\xE8\x35\x69\xBA\xFF\xC1\xF8\x02"
+				"linux"		"\xE8\x2A\x2A\x2A\x2A\xF3\x0F\x2A\x2A\x2A\xC1\xF8\x02"
 			}
 			
 			"DIV_CODE_AddSurvivorStats"
 			{
 				"library"	"server"
-				"linux"		"\xE8\xF1\x9C\xB7\xFF\xC1\xF8\x02"
+				"linux"		"\xE8\x2A\x2A\x2A\x2A\xC1\xF8\x02"
 			}
 			
 			"DIV_CODE_GetVersusCompletion"
 			{
 				"library"	"server"
-				"linux"		"\x8B\xB8\x90\x04\x00\x00\xC1\xFF\x02"
+				"linux"		"\x8B\x55\x2A\xA1\x2A\x2A\x2A\x2A\x8B\xBA\xE8\x0D\x00\x00\x89\x2A\x2A\xC1\xFF\x02"
 			}
 		}
 	}

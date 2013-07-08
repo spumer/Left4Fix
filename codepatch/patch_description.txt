@@ -1,0 +1,44 @@
+
+UpdateMarkersReached: E8 ? ? ? ? F3 0F 2A ? ? C1 F8 02 (EAX, EBX, EDX)
+AddSurvivorStats: E8 ? ? ? ? C1 F8 02 (EAX, ECX, EDX)
+GetVersusCompletion: 8B 55 ? A1 ? ? ? ? 8B BA E8 0D 00 00 89 ? ? C1 FF 02 (EAX, EDI, EDX)
+
+
+UpdateMarkersReached_patch:
+
+E9 ? ? ? ?			/* JMP [address] */
+8B 80 E8 0D 00 00   /* mov eax, [eax+3560] */
+31 D2				/* xor edx, edx */
+BB 0A 00 00 00		/* mov ebx, 10 */
+F7 F3				/* div ebx */
+E9 ? ? ? ?			/* JMP [address] ;jump to next instruction */
+					/* NOP 3 bytes (sar eax, 2) */
+
+Result:
+{ 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xBB, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF3 } 
+
+AddSurvivorStats_patch:
+E9 ? ? ? ?			/* JMP [address] */
+8B 80 E8 0D 00 00	/* mov eax, [eax+3560] */
+31 D2				/* xor edx, edx */
+B9 0A 00 00 00		/* mov ecx, 10 */
+F7 F1				/* div ecx */
+E9 ? ? ? ?			/* JMP [address] ;jump to next instruction */
+Result:
+{ 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF1 }
+
+GetVersusCompletion_patch:
+
+E9 ? ? ? ?			/* JMP [address] */
+8B 45 08			/* mov eax, [ebp+arg_0] */
+					/* copy A1 ? ? ? ? to trampoline end */
+8B 80 E8 0D 00 00	/* mov eax, [eax+3560] */
+					/* copy 89 ? ? to trampoline end */
+31 D2				/* xor edx, edx */
+BF 0A 00 00 00		/* mov edi, 10 */
+F7 F7				/* div edi */
+89 C7				/* mov edi, eax */
+E9 ? ? ? ?			/* JMP [address] ;jump to next instruction */
+Result:
+{ 0x8B, 0x45, 0x08, 0x8B, 0x80, 0xE8, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xBF, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF7, 0x89, 0xC7 } 
+

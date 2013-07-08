@@ -36,8 +36,10 @@
 void r_nowAlive(const Vector& position, death_info_t *data, size_t len) {
 	death_info_t *begin = data;
 	for(; static_cast<size_t>(data - begin) < len; ++data)
-		if(data->m_Pos.DistTo(position) < 5.0)
+		if(data->m_Pos.DistTo(position) < 5.0) {
 			memset(data, 0, sizeof(death_info_t));
+			break;
+		}
 }
 
 void r_nowDead(const Vector& position, uint32_t score, death_info_t *data) {
@@ -48,9 +50,10 @@ void r_nowDead(const Vector& position, uint32_t score, death_info_t *data) {
 int r_appendScores(uint32_t *pCompl, size_t compl_max_inserts, const death_info_t *begin, size_t data_len) {
 	death_info_t *data = (death_info_t *)begin;
 	int result = 0;
-	for(; static_cast<size_t>(data - begin) < data_len; ++data)
+	for(; compl_max_inserts && 
+		static_cast<size_t>(data - begin) < data_len; ++data)
 	{
-		if(data->m_Pos.x && compl_max_inserts) {
+		if(data->m_Pos.x) {
 			*pCompl++ = data->m_DeathDist;
 			result += data->m_DeathDist;
 			--compl_max_inserts;

@@ -45,7 +45,7 @@ class PlayerDeath : public IGameEventListener2
 		if(client) {
 			CBaseEntity *pPlayer = UTIL_GetCBaseEntity(client, true);
 			if(pPlayer == NULL) return;
-			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 576) == 2 ) {		// Get player team index
+			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// Get player team index
 				r_nowDead( GetAbsOrigin(pPlayer), g_scores[client], g_players );
 			}
 		}

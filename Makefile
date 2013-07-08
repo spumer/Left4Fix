@@ -19,8 +19,8 @@ PROJECT = left4fix
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp extension.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp codepatch/score_code_8.cpp\
-			 detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
+OBJECTS = sdk/smsdk_ext.cpp extension.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp codepatch/score_code.cpp\
+			detours/end_versus_mode_round.cpp detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
 #detours/end_versus_mode_round.cpp
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
