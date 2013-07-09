@@ -45,7 +45,7 @@ METAMOD = $(MMSOURCE)/core
 INCLUDE += -I$(HL2SDK_L4D2)/public/game/server -I$(HL2SDK_L4D2)/common -I$(HL2SDK_L4D2)/game/shared
 SRCDS = $(SRCDS_BASE)/left4dead2
 
-LINK += $(HL2LIB)/tier1_i486.a $(HL2LIB)/mathlib_i486.a libvstdlib.so libtier0.so
+LINK += $(HL2LIB)/tier1_i486.a $(HL2LIB)/mathlib_i486.a libvstdlib_srv.so libtier0_srv.so
 
 INCLUDE += -I. -I.. -Isdk -I$(HL2PUB) -I$(HL2PUB)/engine -I$(HL2PUB)/mathlib -I$(HL2PUB)/tier0 \
         -I$(HL2PUB)/tier1 -I$(METAMOD) -I$(METAMOD)/sourcehook -I$(SMSDK)/public -I$(SMSDK)/public/extensions \
@@ -105,8 +105,10 @@ all:
 	mkdir -p $(BIN_DIR)/detours
 	mkdir -p $(BIN_DIR)/codepatch
 	mkdir -p $(BIN_DIR)/l4d2sdk
-	cp $(SRCDS)/bin/libvstdlib.so libvstdlib.so;
-	cp $(SRCDS)/bin/libtier0.so libtier0.so;
+	#ln -sf $(SRCDS)/bin/libvstdlib.so libvstdlib.so;
+	#ln -sf $(SRCDS)/bin/libtier0.so libtier0.so;
+	ln -sf $(SRCDS)/bin/libvstdlib_srv.so libvstdlib_srv.so;
+	ln -sf $(SRCDS)/bin/libtier0_srv.so libtier0_srv.so;
 	$(MAKE) -f Makefile extension TEAM_SIZE=$(TEAM_SIZE)
 
 extension: $(OBJ_BIN)
