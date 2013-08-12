@@ -20,16 +20,16 @@ PROJECT = left4fix
 #USEMETA = true
 
 OBJECTS = sdk/smsdk_ext.cpp extension.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp codepatch/score_code.cpp\
-			detours/end_versus_mode_round.cpp detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
+		detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
 #detours/end_versus_mode_round.cpp
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
 ##############################################
 
-C_OPT_FLAGS = -DNDEBUG -O3 -funroll-loops -pipe -fno-strict-aliasing
+C_OPT_FLAGS = -DNDEBUG -Ofast -flto -funroll-loops -pipe -fno-strict-aliasing -fschedule-insns -fsched-pressure
 C_DEBUG_FLAGS = -D_DEBUG -DDEBUG -g -ggdb3
 C_GCC4_FLAGS = -fvisibility=hidden
-CPP_GCC4_FLAGS = -fvisibility-inlines-hidden -std=c++0x
+CPP_GCC4_FLAGS = -fvisibility-inlines-hidden -std=c++11
 CPP = gcc
 
 ##########################
@@ -105,8 +105,6 @@ all:
 	mkdir -p $(BIN_DIR)/detours
 	mkdir -p $(BIN_DIR)/codepatch
 	mkdir -p $(BIN_DIR)/l4d2sdk
-	#ln -sf $(SRCDS)/bin/libvstdlib.so libvstdlib.so;
-	#ln -sf $(SRCDS)/bin/libtier0.so libtier0.so;
 	ln -sf $(SRCDS)/bin/libvstdlib_srv.so libvstdlib_srv.so;
 	ln -sf $(SRCDS)/bin/libtier0_srv.so libtier0_srv.so;
 	$(MAKE) -f Makefile extension TEAM_SIZE=$(TEAM_SIZE)

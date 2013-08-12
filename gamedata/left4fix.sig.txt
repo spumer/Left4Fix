@@ -35,15 +35,15 @@
 				"library"	"server"
 				"linux"		"@_ZNK11CBaseEntity12GetAbsOriginEv"
             }
-
+			
 			/*
-			 *	CDirectorVersusMode::EndVersusModeRound(bool)
+			 *	int CBaseEntity::GetObserverMode(void) const
 			 */
-			"EndVersusModeRound"
-			{
+            "CBaseEntity_GetObserverMode"
+            {
 				"library"	"server"
-				"linux"		"@_ZN19CDirectorVersusMode18EndVersusModeRoundEb"
-			}
+				"linux"		"@_ZN11CBasePlayer15GetObserverModeEv"
+            }
 			
 			/*
 			 *	CGameRulesProxy::NotifyNetworkStateChanged(void)
@@ -61,12 +61,6 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer24OnRevivedByDefibrillatorEPS_P19CSurvivorDeathModel"
-			}
-			
-			"g_pGameRules"
-			{
-				"library"	"server"
-				"linux"		"@g_pGameRules"
 			}
 			
 			"g_pDirector"

@@ -1,8 +1,8 @@
 /**
  * vim: set ts=4 :
  * =============================================================================
- * Left 4 Downtown 2 SourceMod Extension
- * Copyright (C) 2012 Michael "ProdigySim" Busby
+ * Left 4 Fix SourceMod Extension
+ * Copyright (C) 2013 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -43,7 +43,7 @@ namespace Detours
 		memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
 		memset(g_players, 0, sizeof(g_players));
 		memset(g_scores, 0, sizeof(g_scores));
-		g_totalResult = 0;
+		__sync_and_and_fetch(&g_totalResult, 0); // g_totalResult = 0;
 		return;
 	}
 };

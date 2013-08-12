@@ -37,7 +37,10 @@ class RoundStart : public IGameEventListener2
 	int GetEventDebugID(void) { return EVENT_DEBUG_ID_INIT; }
 	void FireGameEvent(IGameEvent* pEvent)
 	{
-		Detours::g_bRoundEnd_Pre = false;
+		memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
+		memset(g_players, 0, sizeof(g_players));
+		memset(g_scores, 0, sizeof(g_scores));
+		g_totalResult = 0;
 	}
 };
 

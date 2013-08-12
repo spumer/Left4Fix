@@ -1,8 +1,8 @@
 /**
  * vim: set ts=4 :
  * =============================================================================
- * Left 4 Downtown 2 SourceMod Extension
- * Copyright (C) 2012 Michael "ProdigySim" Busby
+ * Left 4 Fix SourceMod Extension
+ * Copyright (C) 2013 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under

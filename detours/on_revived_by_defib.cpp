@@ -35,11 +35,11 @@
 
 namespace Detours
 {
-	int RevivedByDefib::OnRevived(CBaseEntity *pClient, void *deathModel)
+	int RevivedByDefib::OnRevived(CBaseEntity *pInitiator, void *deathModel)
 	{
-		CBaseEntity* pPlayer = reinterpret_cast<CBaseEntity*>(this);
-		r_nowAlive(GetAbsOrigin(pPlayer), g_players, sizeof(g_players)/sizeof(g_players[0]));
+		CBaseEntity* pTarget = reinterpret_cast<CBaseEntity*>(this);
+		r_nowAlive(GetAbsOrigin(pTarget), g_players, sizeof(g_players)/sizeof(g_players[0]));
 		
-		return (this->*(GetTrampoline()))(pPlayer, deathModel);
+		return (this->*(GetTrampoline()))(pInitiator, deathModel);
 	}
 };

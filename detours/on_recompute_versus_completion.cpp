@@ -37,6 +37,8 @@
 #include <stdlib.h>	// for qsort()
 #include "routine.h"
 
+#include <shareddefs.h>	// hl2sdk definitions
+
 /*
 typedef struct {
 	uint32_t survivors_completion_score[2][4];	// 976 bytes
@@ -81,7 +83,7 @@ namespace Detours
 	* Recompute completion for all survivors. Sort results.
 	*/
 	int RecomputeVersusCompletion::myRecompute(void *pGameRules) {
-		// static bool (*IsDead)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return *(bool*)((unsigned char*)pPlayer+252); }; // use it, if you GCC >= 4.5
+		static bool (*IsObserver)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return (GetObserverMode(pPlayer) != OBS_MODE_NONE); };
 		static int (*GetVersusCompletionFunc)(void *, CBaseEntity*);
 		if(!GetVersusCompletionFunc) {
 			if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&GetVersusCompletionFunc) || !GetVersusCompletionFunc ) {
@@ -98,16 +100,24 @@ namespace Detours
 			pPlayer = UTIL_GetCBaseEntity(client, true);
 			if(pPlayer == NULL) continue;
 			
-			// if(GET_TEAM(client) == 2) {
-			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// Get player team index
-				if(IsDead(pPlayer)) continue;
+			if(GET_TEAM(client) == 2) {
+			// if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// CBaseEntity::GetTeamNumber(void)
+				if(IsObserver(pPlayer)) {
+					L4D_DEBUG_LOG("Player %d: %d (observer)", client, g_scores[client]);
+					continue;
+				}
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;
+				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
 			}
 		}
+		L4D_DEBUG_LOG("Alive score: %d", result);
 		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
 		
-		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t), getHighest);
+		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
+			  [](const void* p1, const void* p2){
+				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
+			  });
 		L4D_DEBUG_LOG("myRecompute return: %d.", result);
 		return result;
 	}
