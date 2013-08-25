@@ -63,7 +63,7 @@ namespace Detours {
 	uint32_t g_scores[32+1] = {0};
 	bool (*AreTeamsFlipped)(const void*);
 	const Vector& (*GetAbsOrigin)(const void*);
-	int (*GetObserverMode)(const void*);
+	// int (*GetObserverMode)(const void*);
 	void (*NotifyNetworkStateChanged)(void);
 	uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE] = {0};
 };
@@ -114,11 +114,11 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 		return false;
 	}
 	
-	if(!g_pGameConf->GetMemSig("CBaseEntity_GetObserverMode", (void **)&Detours::GetObserverMode) || !Detours::GetObserverMode)
+	/*if(!g_pGameConf->GetMemSig("CBaseEntity_GetObserverMode", (void **)&Detours::GetObserverMode) || !Detours::GetObserverMode)
 	{
 	    UTIL_Format(error, maxlength, "Could not read CBaseEntity_GetObserverMode signature");
 		return false;
-	}
+	}*/
 	
 	memset(g_players, 0, sizeof(g_players));
 	

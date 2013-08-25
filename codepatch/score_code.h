@@ -28,6 +28,10 @@
  *
  * Version: $Id$
  */
+ 
+#ifdef SCORE_LITE
+	#include "score_code_8.h"
+#else
 
 #ifndef _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_
 #define _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_
@@ -47,4 +51,6 @@ public:
 	void Unpatch();
 };
 
-#endif
+#endif // _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_
+
+#endif // SCORE_LITE

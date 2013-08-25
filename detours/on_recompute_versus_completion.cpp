@@ -83,7 +83,8 @@ namespace Detours
 	* Recompute completion for all survivors. Sort results.
 	*/
 	int RecomputeVersusCompletion::myRecompute(void *pGameRules) {
-		static bool (*IsObserver)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return (GetObserverMode(pPlayer) != OBS_MODE_NONE); };
+		// static bool (*IsObserver)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return (GetObserverMode(pPlayer) != OBS_MODE_NONE); };
+		// static bool (*IsDead)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return *(bool*)((unsigned char*)pPlayer+260); };
 		static int (*GetVersusCompletionFunc)(void *, CBaseEntity*);
 		if(!GetVersusCompletionFunc) {
 			if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&GetVersusCompletionFunc) || !GetVersusCompletionFunc ) {
@@ -94,31 +95,32 @@ namespace Detours
 		
 		int client, result = 0;
 		CBaseEntity *pPlayer;
+		IPlayerInfo *pInfo;
 		
 		uint32_t *pCompl = g_iHighestVersusSurvivorCompletion;
 		for(client = 1; client <= 32; ++client) {
 			pPlayer = UTIL_GetCBaseEntity(client, true);
 			if(pPlayer == NULL) continue;
-			
-			if(GET_TEAM(client) == 2) {
-			// if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// CBaseEntity::GetTeamNumber(void)
+			pInfo = playerhelpers->GetGamePlayer(client)->GetPlayerInfo();
+			/*if(GET_TEAM(client) == 2) {
+			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// CBaseEntity::GetTeamNumber(void)
 				if(IsObserver(pPlayer)) {
-					L4D_DEBUG_LOG("Player %d: %d (observer)", client, g_scores[client]);
 					continue;
-				}
+				}*/
+			if(pInfo && pInfo->GetTeamIndex() == 2) {
+				if(pInfo->IsObserver()) continue;
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;
 				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
 			}
 		}
-		L4D_DEBUG_LOG("Alive score: %d", result);
-		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
+		result = r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
 		
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 			  [](const void* p1, const void* p2){
 				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
 			  });
-		L4D_DEBUG_LOG("myRecompute return: %d.", result);
+		// L4D_DEBUG_LOG("myRecompute return: Alive(%d) + Die(%d) = %d.", result - dieScore, dieScore, result);
 		return result;
 	}
 }

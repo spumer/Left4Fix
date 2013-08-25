@@ -51,7 +51,7 @@
 #include <string.h> // for memset()
 
 #define GET_TEAM(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->GetTeamIndex()
-// #define IS_OBSERVER(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->IsObserver()
+#define IS_OBSERVER(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->IsObserver()
 
 typedef struct {
 	Vector m_Pos;
@@ -148,7 +148,7 @@ namespace Detours {
 	extern uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE];
 	extern bool (*AreTeamsFlipped)(const void*);
 	extern const Vector& (*GetAbsOrigin)(const void*);
-	extern int (*GetObserverMode)(const void*);
+	// extern int (*GetObserverMode)(const void*);
 	extern void (*NotifyNetworkStateChanged)(void);
 };
 
