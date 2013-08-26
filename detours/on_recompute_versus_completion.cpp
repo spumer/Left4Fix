@@ -114,7 +114,7 @@ namespace Detours
 				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
 			}
 		}
-		result = r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
+		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
 		
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 			  [](const void* p1, const void* p2){
