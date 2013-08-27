@@ -6,17 +6,20 @@
 		{			
 			"MarkerDivisor"
 			{
-				"linux"	"112"
+				"linux"		"112"
+				"windows"	"133"
 			}
 			
 			"StatsDivisor"
 			{
-				"linux"	"409"
+				"linux"		"409"
+				"windows"	"297"
 			}
 			
 			"PerPlayerCompletionDivisor"
 			{
-				"linux"	"75"
+				"linux"		"75"
+				"windows"	"47"
 			}
 		}
 		"Signatures"
@@ -25,6 +28,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules25RecomputeVersusCompletionEb"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x33\xC0\x56\x57\x8B\xD9\x89\x2A\x2A\x89\x2A\x2A"
+				/* 55 8B EC 83 EC ? 53 33  C0 56 57 8B D9 89 ? ? 89 ? ? */
 			}
 
 			/*
@@ -62,6 +67,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer24OnRevivedByDefibrillatorEPS_P19CSurvivorDeathModel"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x56\x8B\xF1\x8A\x86\x2A\x2A\x2A\x2A\x57\x6A\x2A\x88\x2A\x2A"
+				/* 55 8B EC 83 EC ? 53 56 8B F1 8A 86 ? ? ? ? 57 6A ? 88 ? ? */
 			}
 			
 			"g_pDirector"
@@ -74,12 +81,16 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules19GetVersusCompletionEP13CTerrorPlayer"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x56\x8B\x75\x2A\x8B\xD9\x85\xF6\x2A\x2A\x2A\x2A\x2A\x2A\x8B\xCE"
+				/* 55 8B EC 83 EC ? 53 56 8B 75 ? 8B D9 85 F6 ? ? ? ? ? ? 8B CE */
 			}
 			
 			"CTerrorGameRules_GetVersusCompletionByCharacter"
 			{
 				"library"	"server"
 				"linux"		"@_ZNK16CTerrorGameRules31GetVersusCompletionPerCharacterE21SurvivorCharacterTypei"
+				"windows"	"\x55\x8B\xEC\x8B\x45\x2A\x56\x50\x8B\xF1\xE8\x2A\x2A\x2A\x2A\x8B\x4D\x2A\x8D\x44\x2A\x2A"
+				/* 55 8B EC 8B 45 ? 56 50 8B F1 E8 ? ? ? ? 8B 4D ? 8D 44 ? ? */
 			}
 			
 			"CDirector_AreTeamsFlipped"
@@ -93,12 +104,16 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN19CDirectorVersusMode20UpdateMarkersReachedEv"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x8B\x41\x2A\x89\x2A\x2A\x39\x41\x2A\x0F\x8D\x2A\x2A\x2A"
+				/* 55 8B EC 83 EC ? 8B 41 ? 89 ? ? 39 41 ? 0F 8D ? ? ? */
 			}
 			
 			"CL4DGameStats_AddSurvivorStats"
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CL4DGameStats16AddSurvivorStatsEb"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x0F\xB6\x45\x2A\x53\x56\x33\xF6\xF7\xD8"
+				/* 55 8B EC 83 EC ? 0F B6 45 ? 53 56 33 F6 F7 D8 */
 			}
 			
 			"DIV_CODE_UpdateMarkersReached"
