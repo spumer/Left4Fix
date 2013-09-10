@@ -21,6 +21,10 @@
 				"linux"		"75"
 				"windows"	"47"
 			}
+			"TheDirector"
+			{
+				"windows"	"12"
+			}
 		}
 		"Signatures"
 		{
@@ -35,20 +39,20 @@
 			/*
 			 *	const Vector& CBaseEntity::GetAbsOrigin(void)
 			 */
-            "CBaseEntity_GetAbsOrigin"
-            {
+			"CBaseEntity_GetAbsOrigin"
+			{
 				"library"	"server"
 				"linux"		"@_ZNK11CBaseEntity12GetAbsOriginEv"
-            }
+			}
 			
 			/*
 			 *	int CBaseEntity::GetObserverMode(void) const
 			 */
-            "CBaseEntity_GetObserverMode"
-            {
+			"CBaseEntity_GetObserverMode"
+			{
 				"library"	"server"
 				"linux"		"@_ZN11CBasePlayer15GetObserverModeEv"
-            }
+			}
 			
 			/*
 			 *	CGameRulesProxy::NotifyNetworkStateChanged(void)
@@ -67,14 +71,25 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer24OnRevivedByDefibrillatorEPS_P19CSurvivorDeathModel"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x56\x8B\xF1\x8A\x86\x2A\x2A\x2A\x2A\x57\x6A\x2A\x88\x2A\x2A"
-				/* 55 8B EC 83 EC ? 53 56 8B F1 8A 86 ? ? ? ? 57 6A ? 88 ? ? */
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x56\x8B\xF1\x8A\x86\x2A\x2A\x2A\x2A\x57\x6A\x2A\x88"
+				/* 55 8B EC 83 EC ? 53 56 8B F1 8A 86 ? ? ? ? 57 6A ? 88 */
 			}
 			
 			"g_pDirector"
 			{
 				"library"	"server"
 				"linux"		"@TheDirector"
+			}
+			
+			/* Used solely to get the offset for TheDirector
+			* CDirectorMusicBanks::OnRoundStart
+			* Has unique string "Event.Reveal"
+			*/
+			"DirectorMusicBanks_OnRoundStart"
+			{
+				"library" "server"
+				"windows" "\x55\x8B\xEC\x83\xEC\x2A\x56\x57\x8B\xF9\x8B\x0D\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x84"
+				/* 55 8B EC 83 EC ? 56 57 8B F9 8B 0D ? ? ? ? E8 ? ? ? ? 84 */
 			}
 			
 			"CTerrorGameRules_GetVersusCompletion"
@@ -89,8 +104,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZNK16CTerrorGameRules31GetVersusCompletionPerCharacterE21SurvivorCharacterTypei"
-				"windows"	"\x55\x8B\xEC\x8B\x45\x2A\x56\x50\x8B\xF1\xE8\x2A\x2A\x2A\x2A\x8B\x4D\x2A\x8D\x44\x2A\x2A"
-				/* 55 8B EC 8B 45 ? 56 50 8B F1 E8 ? ? ? ? 8B 4D ? 8D 44 ? ? */
+				"windows"	"\x55\x8B\xEC\x8B\x45\x2A\x56\x50\x8B\xF1\xE8\x2A\x2A\x2A\x2A\x8B\x4D\x2A\x8D\x44"
+				/* 55 8B EC 8B 45 ? 56 50 8B F1 E8 ? ? ? ? 8B 4D ? 8D 44 */
 			}
 			
 			"CDirector_AreTeamsFlipped"
@@ -104,8 +119,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN19CDirectorVersusMode20UpdateMarkersReachedEv"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x8B\x41\x2A\x89\x2A\x2A\x39\x41\x2A\x0F\x8D\x2A\x2A\x2A"
-				/* 55 8B EC 83 EC ? 8B 41 ? 89 ? ? 39 41 ? 0F 8D ? ? ? */
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x8B\x41\x2A\x89\x2A\x2A\x39\x41\x2A\x0F\x8D"
+				/* 55 8B EC 83 EC ? 8B 41 ? 89 ? ? 39 41 ? 0F 8D */
 			}
 			
 			"CL4DGameStats_AddSurvivorStats"
