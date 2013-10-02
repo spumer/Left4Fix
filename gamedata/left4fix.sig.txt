@@ -32,8 +32,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules25RecomputeVersusCompletionEb"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x33\xC0\x56\x57\x8B\xD9\x89\x2A\x2A\x89\x2A\x2A"
-				/* 55 8B EC 83 EC ? 53 33  C0 56 57 8B D9 89 ? ? 89 ? ? */
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x53\x33\xC0\x56\x57\x8B\xD9\x89\x2A\x2A\x89"
+				/* 55 8B EC 83 EC ? 53 33  C0 56 57 8B D9 89 ? ? 89 */
 			}
 
 			/*
@@ -43,12 +43,14 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZNK11CBaseEntity12GetAbsOriginEv"
+				"windows"	"\x55\x8B\xEC\x8B\x01\x8B\x90\x2A\x2A\x2A\x2A\xFF\xD2\x85\xC0"
+				/* 55 8B EC 8B 01 8B 90 ? ? ? ? FF D2 85 C0 */
 			}
 			
 			/*
-			 *	int CBaseEntity::GetObserverMode(void) const
+			 *	int CBasePlayer::GetObserverMode(void) const
 			 */
-			"CBaseEntity_GetObserverMode"
+			"CBasePlayer_GetObserverMode"
 			{
 				"library"	"server"
 				"linux"		"@_ZN11CBasePlayer15GetObserverModeEv"
