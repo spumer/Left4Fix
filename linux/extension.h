@@ -50,8 +50,6 @@
 #include <stdint.h>
 #include <string.h> // for memset()
 
-#define GET_TEAM(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->GetTeamIndex()
-#define IS_OBSERVER(client) playerhelpers->GetGamePlayer(client)->GetPlayerInfo()->IsObserver()
 
 typedef struct {
 	Vector m_Pos;
@@ -143,8 +141,8 @@ extern CGlobalVars *gpGlobals;
 
 namespace Detours {
 	extern int g_totalResult;
-	extern death_info_t g_players[32];
-	extern uint32_t g_scores[33];
+	extern death_info_t g_dead_players[32];
+	extern uint32_t g_scores[32+1];
 	extern uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE];
 	extern bool (*AreTeamsFlipped)(const void*);
 	extern const Vector& (*GetAbsOrigin)(const void*);

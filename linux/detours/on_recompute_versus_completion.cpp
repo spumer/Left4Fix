@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -46,45 +46,43 @@ typedef struct {
 	uint8_t survivors_escaped[4];				// 1040 bytes	// in-game buffer
 	uint32_t versus_completion_score;			// 1044 bytes	// in-game buffer
 	uint32_t versus_survival_multiplier[2];		// 1048 bytes	// user count who survived
-	uint8_t unkownData[100];			      	// 1056 bytes	
+	uint8_t unkownData[100];			      	// 1056 bytes
 	uint32_t sacrafice_escaped_mask;			// 1156 bytes	// e.g. 1000 0110 0000 0001 1000 0110 0000 0001 where bit position is a client index
 } versus_completion_t;
 */
 
 namespace Detours
 {
-	int RecomputeVersusCompletion::OnRecompute(bool arg) {		
+	int RecomputeVersusCompletion::OnRecompute(bool arg) {
 		int i;
 		bool team = AreTeamsFlipped(*g_pDirector);
 
 		i = myRecompute(this);
 		if(i > g_totalResult) g_totalResult = i;
-		
+
 		uint32_t (*piVersusSurvivorCompletion)[4] = reinterpret_cast<uint32_t(*)[4]>((unsigned char *)(this) + 976);
-		
+
 		/**
 		* Fix score shows by pressing TAB
 		*/
 		NotifyNetworkStateChanged();
-		
-		piVersusSurvivorCompletion[team][0] = 
-			piVersusSurvivorCompletion[team][1] = 
-				piVersusSurvivorCompletion[team][2] = 
+
+		piVersusSurvivorCompletion[team][0] =
+			piVersusSurvivorCompletion[team][1] =
+				piVersusSurvivorCompletion[team][2] =
 					piVersusSurvivorCompletion[team][3] = g_totalResult / 4;
-		
+
 		piVersusSurvivorCompletion[team][0] += g_totalResult % 4;
-		
+
 		L4D_DEBUG_LOG("Recompute return: %d.", g_totalResult);
-		
+
 		return g_totalResult;
 	}
-	
+
 	/**
 	* Recompute completion for all survivors. Sort results.
 	*/
 	int RecomputeVersusCompletion::myRecompute(void *pGameRules) {
-		// static bool (*IsObserver)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return (GetObserverMode(pPlayer) != OBS_MODE_NONE); };
-		// static bool (*IsDead)(CBaseEntity *) = [](CBaseEntity *pPlayer) { return *(bool*)((unsigned char*)pPlayer+260); };
 		static int (*GetVersusCompletionFunc)(void *, CBaseEntity*);
 		if(!GetVersusCompletionFunc) {
 			if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&GetVersusCompletionFunc) || !GetVersusCompletionFunc ) {
@@ -92,30 +90,32 @@ namespace Detours
 				assert(0);
 			}
 		}
-		
+
 		int client, result = 0;
 		CBaseEntity *pPlayer;
 		IPlayerInfo *pInfo;
-		
+		IGamePlayer *pGamePlayer;
+
 		uint32_t *pCompl = g_iHighestVersusSurvivorCompletion;
 		for(client = 1; client <= 32; ++client) {
-			pPlayer = UTIL_GetCBaseEntity(client, true);
-			if(pPlayer == NULL) continue;
-			pInfo = playerhelpers->GetGamePlayer(client)->GetPlayerInfo();
-			/*if(GET_TEAM(client) == 2) {
-			if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// CBaseEntity::GetTeamNumber(void)
-				if(IsObserver(pPlayer)) {
-					continue;
-				}*/
-			if(pInfo && pInfo->GetTeamIndex() == 2) {
+			pPlayer = gamehelpers->ReferenceToEntity(client);
+			if(!pPlayer) continue;
+
+			pGamePlayer = playerhelpers->GetGamePlayer(client);
+			if(!pGamePlayer) continue;
+
+			pInfo = pGamePlayer->GetPlayerInfo();
+			if(!pInfo) continue;
+
+			if(pInfo->GetTeamIndex() == 2) {
 				if(pInfo->IsObserver()) continue;
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;
 				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
 			}
 		}
-		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_players, sizeof(g_players)/sizeof(g_players[0]));
-		
+		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 			  [](const void* p1, const void* p2){
 				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);

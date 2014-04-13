@@ -38,7 +38,7 @@ class RoundStart : public IGameEventListener2
 	void FireGameEvent(IGameEvent* pEvent)
 	{
 		memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
-		memset(g_players, 0, sizeof(g_players));
+		memset(g_dead_players, 0, sizeof(g_dead_players));
 		memset(g_scores, 0, sizeof(g_scores));
 		g_totalResult = 0;
 	}

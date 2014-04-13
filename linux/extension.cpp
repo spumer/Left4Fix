@@ -39,7 +39,6 @@
 #include "detours/on_get_completion_by_character.h"
 #include "detours/on_recompute_versus_completion.h"
 #include "detours/on_revived_by_defib.h"
-
 #include "event_player_death.hpp"
 #include "event_round_start.hpp"
 
@@ -59,11 +58,10 @@ void **g_pDirector = NULL;
 
 namespace Detours {
 	int g_totalResult = 0;
-	death_info_t g_players[32];
+	death_info_t g_dead_players[32];
 	uint32_t g_scores[32+1] = {0};
 	bool (*AreTeamsFlipped)(const void*);
 	const Vector& (*GetAbsOrigin)(const void*);
-	// int (*GetObserverMode)(const void*);
 	void (*NotifyNetworkStateChanged)(void);
 	uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE] = {0};
 };
@@ -113,14 +111,8 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	    UTIL_Format(error, maxlength, "Could not read CGameRulesProxy_NotifyNetworkStateChanged signature");
 		return false;
 	}
-	
-	/*if(!g_pGameConf->GetMemSig("CBaseEntity_GetObserverMode", (void **)&Detours::GetObserverMode) || !Detours::GetObserverMode)
-	{
-	    UTIL_Format(error, maxlength, "Could not read CBaseEntity_GetObserverMode signature");
-		return false;
-	}*/
-	
-	memset(g_players, 0, sizeof(g_players));
+
+	memset(g_dead_players, 0, sizeof(g_dead_players));
 	
 	gameevents->AddListener(&g_OnPlayerDeath, "player_death", true);
 	gameevents->AddListener(&g_OnRoundStart,  "round_start",  true);

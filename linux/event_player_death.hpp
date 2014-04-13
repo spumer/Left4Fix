@@ -43,13 +43,17 @@ class PlayerDeath : public IGameEventListener2
 	{
 		int client = playerhelpers->GetClientOfUserId(pEvent->GetInt("userid"));
 		if(client) {
-			CBaseEntity *pPlayer = UTIL_GetCBaseEntity(client, true);
-			if(pPlayer == NULL) return;
-			IPlayerInfo *pInfo = playerhelpers->GetGamePlayer(client)->GetPlayerInfo();
-			// if( *reinterpret_cast<uint8_t*>((unsigned char*)pPlayer + 588) == 2 ) {		// Get player team index
-			// if(GET_TEAM(client) == 2) {
-			if(pInfo && pInfo->GetTeamIndex() == 2) {
-				r_nowDead( GetAbsOrigin(pPlayer), g_scores[client], g_players );
+			CBaseEntity* pPlayer = gamehelpers->ReferenceToEntity(client);
+			if(!pPlayer) return;
+
+			IGamePlayer* pGamePlayer = playerhelpers->GetGamePlayer(client);
+			if(!pGamePlayer) return;
+
+			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
+			if(!pInfo) return;
+
+			if(pInfo->GetTeamIndex() == 2) {
+				r_nowDead( GetAbsOrigin(pPlayer), g_scores[client], g_dead_players );
 			}
 		}
 	}

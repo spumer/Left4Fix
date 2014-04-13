@@ -52,34 +52,3 @@ size_t UTIL_Format(char *buffer, size_t maxlength, const char *fmt, ...)
 		return len;
 	}
 }
-
-/* Taken from Sourcemod Tf2 Extension */
-CBaseEntity *UTIL_GetCBaseEntity(int num, bool onlyPlayers)
-{
-	edict_t *pEdict = PEntityOfEntIndex(num);
-	if (!pEdict || pEdict->IsFree())
-	{
-		return NULL;
-	}
-
-	if (num > 0 && num <= playerhelpers->GetMaxClients())
-	{
-		IGamePlayer *pPlayer = playerhelpers->GetGamePlayer(pEdict);
-		if (!pPlayer || !pPlayer->IsConnected())
-		{
-			return NULL;
-		}
-	}
-	else if (onlyPlayers)
-	{
-		return NULL;
-	}
-
-	IServerUnknown *pUnk;
-	if ((pUnk=pEdict->GetUnknown()) == NULL)
-	{
-		return NULL;
-	}
-
-	return pUnk->GetBaseEntity();
-}
