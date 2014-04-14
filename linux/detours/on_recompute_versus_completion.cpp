@@ -102,7 +102,7 @@ namespace Detours
 			if(!pPlayer) continue;
 
 			pGamePlayer = playerhelpers->GetGamePlayer(client);
-			if(!pGamePlayer) continue;
+			if(!pGamePlayer || !pGamePlayer->IsConnected()) continue;
 
 			pInfo = pGamePlayer->GetPlayerInfo();
 			if(!pInfo) continue;

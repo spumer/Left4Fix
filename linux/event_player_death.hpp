@@ -47,7 +47,7 @@ class PlayerDeath : public IGameEventListener2
 			if(!pPlayer) return;
 
 			IGamePlayer* pGamePlayer = playerhelpers->GetGamePlayer(client);
-			if(!pGamePlayer) return;
+			if(!pGamePlayer || !pGamePlayer->IsConnected()) return;
 
 			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
 			if(!pInfo) return;
