@@ -29,40 +29,22 @@
  * Version: $Id$
  */
 
-#include "score_code_8.h"
-#include "extension.h"
-#include "CDetour/detourhelpers.h"
+#ifndef _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_
+#define _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_
 
-void ScoreCode::Patch() {
-	int offset;
-	g_pGameConf->GetMemSig("CDirector_UpdateMarkersReached", (void **)&m_pDivisor);
-	g_pGameConf->GetMemSig("CL4DGameStats_AddSurvivorStats", (void **)&m_pDivisor2);
-	g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&m_pDivisor3);
-	
-	g_pGameConf->GetOffset("MarkerDivisor", &offset);
-	if(m_pDivisor && offset) {
-		m_pDivisor += offset;
-		SetMemPatchable(m_pDivisor, 1);
-		(*m_pDivisor) = 3;
-	}
-	
-	g_pGameConf->GetOffset("StatsDivisor", &offset);
-	if(m_pDivisor2 && offset) {
-		m_pDivisor2 += offset;
-		SetMemPatchable(m_pDivisor2, 1);
-		(*m_pDivisor2) = 3;
-	}
-	
-	g_pGameConf->GetOffset("PerPlayerCompletionDivisor", &offset);
-	if(m_pDivisor3 && offset) {
-		m_pDivisor3 += offset;
-		SetMemPatchable(m_pDivisor3, 1);
-		(*m_pDivisor3) = 3;
-	}
-}
+#include "icodepatch.h"
 
-void ScoreCode::Unpatch() {
-	if(m_pDivisor) *m_pDivisor = 0x02;
-	if(m_pDivisor2)*m_pDivisor2= 0x02;
-	if(m_pDivisor3)*m_pDivisor3= 0x02;
-}
+class ScoreCode : public ICodePatch {
+private:
+	bool m_isPatched;
+	unsigned char *m_pCompletion, *m_pMarkers, *m_pL4DStats;
+	unsigned char *m_injectMarker, *m_injectStats, *m_injectCompl;
+public:
+	ScoreCode() : m_isPatched(false), m_pCompletion(0), m_pMarkers(0), m_pL4DStats(0),
+					m_injectMarker(0), m_injectStats(0), m_injectCompl(0) {}
+	~ScoreCode() { Unpatch(); }
+	void Patch();
+	void Unpatch();
+};
+
+#endif // _INCLUDE_SOURCEMOD_SCORE_CODE_PATCH_H_

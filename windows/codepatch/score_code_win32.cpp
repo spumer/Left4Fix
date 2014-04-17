@@ -29,7 +29,7 @@
  * Version: $Id$
  */
 
-#include "score_code.h"
+#include "score_code_basic.h"
 #include "extension.h"
 #include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
