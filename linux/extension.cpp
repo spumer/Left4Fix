@@ -61,7 +61,6 @@ namespace Detours {
 	death_info_t g_dead_players[32];
 	uint32_t g_scores[32+1] = {0};
 	bool (*AreTeamsFlipped)(const void*);
-	const Vector& (*GetAbsOrigin)(const void*);
 	void (*NotifyNetworkStateChanged)(void);
 	uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE] = {0};
 };
@@ -97,12 +96,6 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	if(!g_pGameConf->GetMemSig("CDirector_AreTeamsFlipped", (void **)&Detours::AreTeamsFlipped) || !Detours::AreTeamsFlipped)
 	{
 	    UTIL_Format(error, maxlength, "Could not read CDirector_AreTeamsFlipped signature");
-		return false;
-	}
-	
-	if(!g_pGameConf->GetMemSig("CBaseEntity_GetAbsOrigin", (void **)&Detours::GetAbsOrigin) || !Detours::GetAbsOrigin)
-	{
-	    UTIL_Format(error, maxlength, "Could not read CBaseEntity_GetAbsOrigin signature");
 		return false;
 	}
 	

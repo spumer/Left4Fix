@@ -53,7 +53,7 @@ class PlayerDeath : public IGameEventListener2
 			if(!pInfo) return;
 
 			if(pInfo->GetTeamIndex() == 2) {
-				r_nowDead( GetAbsOrigin(pPlayer), g_scores[client], g_dead_players );
+				r_nowDead( pInfo->GetAbsOrigin(), g_scores[client], g_dead_players );
 			}
 		}
 	}

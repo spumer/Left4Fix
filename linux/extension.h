@@ -145,8 +145,6 @@ namespace Detours {
 	extern uint32_t g_scores[32+1];
 	extern uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE];
 	extern bool (*AreTeamsFlipped)(const void*);
-	extern const Vector& (*GetAbsOrigin)(const void*);
-	// extern int (*GetObserverMode)(const void*);
 	extern void (*NotifyNetworkStateChanged)(void);
 };
 

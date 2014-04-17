@@ -38,7 +38,17 @@ namespace Detours
 	int RevivedByDefib::OnRevived(CBaseEntity *pInitiator, void *deathModel)
 	{
 		CBaseEntity* pTarget = reinterpret_cast<CBaseEntity*>(this);
-		r_nowAlive(GetAbsOrigin(pTarget), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+		cell_t client = gamehelpers->EntityToBCompatRef(pTarget);
+
+		IGamePlayer* pGamePlayer = playerhelpers->GetGamePlayer(client);
+		if(pGamePlayer) {
+			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
+			if(pInfo) {
+				r_nowAlive(pInfo->GetAbsOrigin(), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+				L4D_DEBUG_LOG("RevivedByDefib called for: %s", pInfo->GetName());
+			}
+		}
+
 		
 		return (this->*(GetTrampoline()))(pInitiator, deathModel);
 	}
