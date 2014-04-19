@@ -19,9 +19,9 @@ PROJECT = left4fix
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp extension.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp \
+OBJECTS = sdk/smsdk_ext.cpp extension.cpp natives.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp \
 		detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
-		
+
 ifeq "$(TEAM_SIZE)" "8"
 	OBJECTS += codepatch/score_code_lite.cpp
 	CFLAGS += -DSCORE_LITE
@@ -106,8 +106,8 @@ $(BIN_DIR)/%.o: %.cpp
 ifndef TEAM_SIZE
 	$(error Please set the TEAM_SIZE. Exmpl: make TEAM_SIZE=10)
 endif
-	
-all:	
+
+all:
 	mkdir -p $(BIN_DIR)/sdk
 	mkdir -p $(BIN_DIR)/detours
 	mkdir -p $(BIN_DIR)/codepatch

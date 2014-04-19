@@ -1,6 +1,5 @@
+*.o
 *.so
-Release
-Release/*
-Debug
-Debug/*
+Release/**
+Debug/**
 ^.*
