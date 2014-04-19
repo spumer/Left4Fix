@@ -55,6 +55,7 @@ CGlobalVars *gpGlobals;
 PlayerDeath g_OnPlayerDeath;
 RoundStart g_OnRoundStart;
 void **g_pDirector = NULL;
+extern sp_nativeinfo_t g_Left4FixNatives[];
 
 namespace Detours {
 	int g_totalResult = 0;
@@ -120,6 +121,9 @@ void Left4Fix::SDK_OnAllLoaded() {
 	g_PatchManager.Register(new AutoPatch<Detours::RecomputeVersusCompletion>());
 	g_PatchManager.Register(new AutoPatch<Detours::OnGetCompletionByCharacter>());
 	g_PatchManager.Register(new AutoPatch<Detours::RevivedByDefib>());
+
+	sharesys->AddNatives(myself, g_Left4FixNatives);
+	sharesys->RegisterLibrary(myself, "Left4Fix");
 }
 
 void Left4Fix::SDK_OnUnload() {
