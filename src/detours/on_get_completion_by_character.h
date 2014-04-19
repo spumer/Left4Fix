@@ -38,7 +38,7 @@ namespace Detours {
 	
 class OnGetCompletionByCharacter;
 
-typedef int (__thiscall cakOnGetCompletionByCharacter::*GetCompletionByCharFunc)(int, int);
+typedef int (__thiscall OnGetCompletionByCharacter::*GetCompletionByCharFunc)(int, int);
 
 class OnGetCompletionByCharacter: public DetourTemplate<GetCompletionByCharFunc, OnGetCompletionByCharacter>
 {
