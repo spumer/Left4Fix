@@ -29,16 +29,27 @@
  * Version: $Id$
  */
 
+#include "on_revived_by_defib.h"
 #include "extension.h"
-#include "on_init_versus_completion.h"
- 
+#include "routine.h"
+
 namespace Detours
 {
-	int InitVersusCompletion::OnInit() {
-		int result = (this->*(GetTrampoline()))();
-		int newResult = result / 4 * TEAM_SIZE;
-		*((unsigned int *)((unsigned char *)(*g_pGameRules) + 1168)) = newResult;
-		L4D_DEBUG_LOG("Init Completion: %d (engine), %d (my own)", result, newResult);
-		return newResult;
+	int __thiscall RevivedByDefib::OnRevived(CBaseEntity *pInitiator, void *deathModel)
+	{
+		CBaseEntity* pTarget = reinterpret_cast<CBaseEntity*>(this);
+		cell_t client = gamehelpers->EntityToBCompatRef(pTarget);
+
+		IGamePlayer* pGamePlayer = playerhelpers->GetGamePlayer(client);
+		if(pGamePlayer) {
+			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
+			if(pInfo) {
+				r_nowAlive(pInfo->GetAbsOrigin(), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+				L4D_DEBUG_LOG("RevivedByDefib called for: %s", pInfo->GetName());
+			}
+		}
+
+		
+		return (this->*(GetTrampoline()))(pInitiator, deathModel);
 	}
-}
+};

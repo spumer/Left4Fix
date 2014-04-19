@@ -29,21 +29,35 @@
  * Version: $Id$
  */
 
-#include "end_versus_mode_round.h"
-#include "extension.h"
+#ifndef _INCLUDE_SOURCEMOD_DETOUR_RECOMPUTE_VERSUS_COMPLETION_H_
+#define _INCLUDE_SOURCEMOD_DETOUR_RECOMPUTE_VERSUS_COMPLETION_H_
+#include "detour_template.h"
 
-namespace Detours
+namespace Detours {
+	
+class RecomputeVersusCompletion;
+
+typedef int (__thiscall RecomputeVersusCompletion::*OnRecomputeFunc)(bool);
+
+class RecomputeVersusCompletion: public DetourTemplate<OnRecomputeFunc, RecomputeVersusCompletion>
 {
-	void l4fx_EndVersusModeRound::OnEndVersusModeRound(bool countSurvivors)
+private: //note: implementation of DetourTemplate abstracts
+
+	int __thiscall OnRecompute(bool);
+	int myRecompute(void*);
+
+	// get the signature name (i.e. "GetCrouchTopSpeed") from the game conf
+	virtual const char *GetSignatureName()
 	{
-		if(g_bRoundEnd_Pre) return;
-		g_bRoundEnd_Pre = true;
-		(this->*(GetTrampoline()))(countSurvivors);
-		
-		memset(g_iHighestVersusSurvivorCompletion, 0, sizeof(g_iHighestVersusSurvivorCompletion));
-		memset(g_players, 0, sizeof(g_players));
-		memset(g_scores, 0, sizeof(g_scores));
-		__sync_and_and_fetch(&g_totalResult, 0); // g_totalResult = 0;
-		return;
+		return "CTerrorGameRules_RecomputeVersusCompletion";
 	}
-};
+
+	//notify our patch system which function should be used as the detour
+	virtual OnRecomputeFunc GetDetour()
+	{
+		return &RecomputeVersusCompletion::OnRecompute;
+	}
+};	// CLASS RecomputeVersusCompletion
+
+};	// NAMESPACE Detours
+#endif

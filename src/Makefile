@@ -23,10 +23,10 @@ OBJECTS = sdk/smsdk_ext.cpp extension.cpp util.cpp routine.cpp codepatch/patchma
 		detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
 		
 ifeq "$(TEAM_SIZE)" "8"
-	OBJECTS += codepatch/score_code_8.cpp
+	OBJECTS += codepatch/score_code_lite.cpp
 	CFLAGS += -DSCORE_LITE
 else
-	OBJECTS += codepatch/score_code.cpp
+	OBJECTS += codepatch/score_code_linux.cpp
 endif
 
 ##############################################
@@ -47,7 +47,7 @@ override ENGSET = false
 
 HL2PUB = $(HL2SDK_L4D2)/public
 HL2LIB = $(HL2SDK_L4D2)/lib/linux
-CFLAGS += -DSOURCE_ENGINE=6 -DTEAM_SIZE=$(TEAM_SIZE)
+CFLAGS += -DSOURCE_ENGINE=6
 METAMOD = $(MMSOURCE)/core
 INCLUDE += -I$(HL2SDK_L4D2)/public/game/server -I$(HL2SDK_L4D2)/common -I$(HL2SDK_L4D2)/game/shared
 SRCDS = $(SRCDS_BASE)/left4dead2
@@ -64,7 +64,7 @@ LINK += -m32 -ldl -lm
 
 CFLAGS += -D_LINUX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
         -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -Wall -Werror -Wno-switch \
-        -Wno-unused -mfpmath=sse -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32 -DGNUC
+        -Wno-unused -mfpmath=sse -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32 -DGNUC -D__thiscall= -DTEAM_SIZE=$(TEAM_SIZE)
 
 CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti -fno-threadsafe-statics -Wno-overloaded-virtual
 

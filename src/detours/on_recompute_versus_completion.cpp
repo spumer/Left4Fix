@@ -53,7 +53,7 @@ typedef struct {
 
 namespace Detours
 {
-	int RecomputeVersusCompletion::OnRecompute(bool arg) {
+	int __thiscall RecomputeVersusCompletion::OnRecompute(bool arg) {
 		int i;
 		bool team = AreTeamsFlipped(*g_pDirector);
 

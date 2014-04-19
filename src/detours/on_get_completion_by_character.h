@@ -28,29 +28,36 @@
  *
  * Version: $Id$
  */
-#ifndef _INCLUDE_SOURCEMOD_EVENT_ON_PLAYER_DEATH_H_
-#define _INCLUDE_SOURCEMOD_EVENT_ON_PLAYER_DEATH_H_
-#include "util.h"
-#include "routine.h"
-#include "extension.h"
 
-using namespace Detours;
+#ifndef _INCLUDE_SOURCEMOD_DETOUR_GET_PLAYER_BY_CHARACTER_H_
+#define _INCLUDE_SOURCEMOD_DETOUR_GET_PLAYER_BY_CHARACTER_H_
+#include "detour_template.h"
+#include <stdint.h>
 
-class PlayerDeath : public IGameEventListener2
+namespace Detours {
+	
+class OnGetCompletionByCharacter;
+
+typedef int (__thiscall cakOnGetCompletionByCharacter::*GetCompletionByCharFunc)(int, int);
+
+class OnGetCompletionByCharacter: public DetourTemplate<GetCompletionByCharFunc, OnGetCompletionByCharacter>
 {
-	int GetEventDebugID(void) { return EVENT_DEBUG_ID_INIT; }
-	void FireGameEvent(IGameEvent* pEvent)
+private: //note: implementation of DetourTemplate abstracts
+
+	int __thiscall OnGetCompletion(int, int);
+
+	// get the signature name (i.e. "GetCrouchTopSpeed") from the game conf
+	virtual const char *GetSignatureName()
 	{
-		int client = playerhelpers->GetClientOfUserId(pEvent->GetInt("userid"));
-		if(client) {
-			CBaseEntity *pPlayer = UTIL_GetCBaseEntity(client, true);
-			if(pPlayer == NULL) return;
-			IPlayerInfo *pInfo = playerhelpers->GetGamePlayer(client)->GetPlayerInfo();
-			if(pInfo && pInfo->GetTeamIndex() == 2) {
-				r_nowDead( pInfo->GetAbsOrigin(), g_scores[client], g_players );
-			}
-		}
+		return "CTerrorGameRules_GetVersusCompletionByCharacter";
+	}
+
+	//notify our patch system which function should be used as the detour
+	virtual GetCompletionByCharFunc GetDetour()
+	{
+		return &OnGetCompletionByCharacter::OnGetCompletion;
 	}
 };
 
+};
 #endif
