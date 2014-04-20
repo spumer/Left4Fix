@@ -35,6 +35,7 @@
 #include "codepatch/patchmanager.h"
 #include "codepatch/autopatch.h"
 #include "codepatch/score_code.h"
+#include "codepatch/warp_code.h"
 
 #include "detours/on_get_completion_by_character.h"
 #include "detours/on_recompute_versus_completion.h"
@@ -121,6 +122,7 @@ void Left4Fix::SDK_OnAllLoaded() {
 	g_PatchManager.Register(new AutoPatch<Detours::RecomputeVersusCompletion>());
 	g_PatchManager.Register(new AutoPatch<Detours::OnGetCompletionByCharacter>());
 	g_PatchManager.Register(new AutoPatch<Detours::RevivedByDefib>());
+	g_PatchManager.Register(new AutoPatch<WarpCode>());
 
 	sharesys->AddNatives(myself, g_Left4FixNatives);
 	sharesys->RegisterLibrary(myself, "Left4Fix");

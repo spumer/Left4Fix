@@ -5,10 +5,10 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK ?= ../sourcemod
-SRCDS_BASE ?= ../srcds
-HL2SDK_L4D2 ?= ../hl2sdk-l4d2
-MMSOURCE ?= ../mmsource
+SMSDK ?= ../../_SDK_PLATFORM/sourcemod
+SRCDS_BASE ?= ../../_SDK_PLATFORM/srcds
+HL2SDK_L4D2 ?= ../../_SDK_PLATFORM/hl2sdk-l4d2
+MMSOURCE ?= ../../_SDK_PLATFORM/mmsource
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -19,8 +19,9 @@ PROJECT = left4fix
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp extension.cpp natives.cpp util.cpp routine.cpp codepatch/patchmanager.cpp detours/on_revived_by_defib.cpp \
-		detours/on_recompute_versus_completion.cpp detours/on_get_completion_by_character.cpp detours/detour.cpp asm/asm.c
+OBJECTS = asm/asm.c sdk/smsdk_ext.cpp extension.cpp natives.cpp util.cpp routine.cpp \
+		detours/detour.cpp detours/on_revived_by_defib.cpp detours/on_recompute_versus_completion.cpp \
+		detours/on_get_completion_by_character.cpp codepatch/patchmanager.cpp codepatch/warp_code_linux.cpp
 
 ifeq "$(TEAM_SIZE)" "8"
 	OBJECTS += codepatch/score_code_lite.cpp
