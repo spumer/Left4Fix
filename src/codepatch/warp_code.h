@@ -37,7 +37,7 @@ class WarpCode : public ICodePatch {
 private:
 	bool m_isPatched;
 public:
-	WarpCode() {}
+	WarpCode() : m_isPatched(false) {}
 	~WarpCode() { Unpatch(); }
 	void Patch();
 	void Unpatch();

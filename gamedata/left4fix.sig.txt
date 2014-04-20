@@ -21,13 +21,20 @@
 				"linux"		"75"
 				"windows"	"47"
 			}
+		
 			"TheDirector"
 			{
 				"windows"	"12"
 			}
+		
 			"WarpGhost_GetPlayerByCharacter"
 			{
 				"linux"		"5"
+			}
+
+			"WarpGhost_MaxPlayerCount"
+			{
+				"linux"		"-19"
 			}
 		}
 		"Signatures"

@@ -36,12 +36,38 @@
 #include "patch_utils.hpp"
 
 
-int (*CTerrorPlayer_GetPlayerByCharacter)(int);
+class CBaseEntity;
+CBaseEntity* (*CTerrorPlayer_GetPlayerByCharacter)(int);
 
-
-int GetPlayerByCharacterDetour(int survivorType) {
+CBaseEntity* GetPlayerByCharacterDetour(int survivorType) {
 	L4D_DEBUG_LOG("GetPlayerByCharacterDetour called for %d", survivorType);
-	return CTerrorPlayer_GetPlayerByCharacter(survivorType);
+	
+	CBaseEntity* pPlayer = nullptr;
+
+	int maxplayers = playerhelpers->GetMaxClients();
+	for(int client = 1, skip = survivorType; client < maxplayers; ++client) {
+		CBaseEntity* pCurPlayer = gamehelpers->ReferenceToEntity(client);
+		if(!pCurPlayer) continue;
+
+		IGamePlayer* pGamePlayer = playerhelpers->GetGamePlayer(client);
+		if(!pGamePlayer || !pGamePlayer->IsConnected()) continue;
+
+		IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
+		if(!pInfo || pInfo->GetTeamIndex() != 2 || pInfo->IsObserver()) continue;
+
+		if(skip <= 0) {
+			L4D_DEBUG_LOG("GetPlayerByCharacterDetour was end: name=%s", pInfo->GetName());
+			pPlayer = pCurPlayer;
+			break;	
+		}
+		--skip;
+
+		if(!pPlayer) {
+			pPlayer = pCurPlayer;
+		}
+	}
+	return pPlayer;
+	// return CTerrorPlayer_GetPlayerByCharacter(survivorType);
 }
 
 
@@ -49,38 +75,48 @@ void WarpCode::Patch() {
 	if(m_isPatched) return;
 	
 	int offset;
-	uint8_t* pGetPlayerCallOffset;
+	uint8_t* pGetPlayerCall;
+	uint8_t* pMaxPlayerCount;
 	uint8_t* pFunc;
 
-	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&pGetPlayerCallOffset);
-	if( !pGetPlayerCallOffset ) {
-		g_pSM->LogError(myself, "Can't get the \"WarpCode\" signature: %x", pGetPlayerCallOffset);
+	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&pFunc);
+	if( !pFunc ) {
+		g_pSM->LogError(myself, "Can't get the \"WarpCode\" signature: %x", pFunc);
 		return;
 	}
 
+	pGetPlayerCall = pFunc;
+	if(g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter", &offset)) {
+		pGetPlayerCall += offset;
+	}
+
+	pMaxPlayerCount = pFunc;
+	if(g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset)) {
+		pMaxPlayerCount += offset;
+	}
+
+	// Get the original function
 	g_pGameConf->GetMemSig("CTerrorPlayer_GetPlayerByCharacter", (void **)&pFunc);
 	if( !pFunc ) {
 		g_pSM->LogError(myself, "Can't get the \"CTerrorPlayer_GetPlayerByCharacter\" signature: %x", pFunc);
 		return;
 	}
 
-	if(g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter", &offset)) {
-		pGetPlayerCallOffset += offset;
-	}
-
 	#ifdef DEBUG
-	memDump(pGetPlayerCallOffset, 8);
+	memDump(pMaxPlayerCount, 8);
 	#endif
 
-	SetMemPatchable(pGetPlayerCallOffset, OP_CALL_SIZE);
-	CTerrorPlayer_GetPlayerByCharacter = (int (*)(int))pFunc;
-	replace_call_addr((void *)pGetPlayerCallOffset, (void *)GetPlayerByCharacterDetour);
+	SetMemPatchable(pMaxPlayerCount, 1);
+	*pMaxPlayerCount = static_cast<uint8_t>(TEAM_SIZE - 1);
 
 	#ifdef DEBUG
-	memDump(pGetPlayerCallOffset, 8);
+	memDump(pMaxPlayerCount, 8);
 	#endif
 
-	
+	SetMemPatchable(pGetPlayerCall, OP_CALL_SIZE);
+	CTerrorPlayer_GetPlayerByCharacter = (CBaseEntity* (*)(int))pFunc;
+	replace_call_addr((void *)pGetPlayerCall, (void *)GetPlayerByCharacterDetour);
+
 	m_isPatched = true;
 }
 
