@@ -112,6 +112,11 @@ namespace Detours
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;
 				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
+			
+				// Break loop when g_iHighestVersusSurvivorCompletion buffer is filled
+				if((TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion)) == 0) {
+					break;
+				}
 			}
 		}
 		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
