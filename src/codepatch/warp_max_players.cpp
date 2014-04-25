@@ -29,16 +29,36 @@
  * Version: $Id$
  */
 
-#pragma once
+#include "extension.h"
+#include "warp_max_players.h"
+#include "CDetour/detourhelpers.h"
 
-#include "icodepatch.h"
 
-class WarpCode : public ICodePatch {
-private:
-	bool m_isPatched;
-public:
-	WarpCode() : m_isPatched(false) {}
-	~WarpCode() { Unpatch(); }
-	void Patch();
-	void Unpatch();
-};
+void WarpMaxPlayers::Patch() {
+	if(m_isPatched) return;
+	
+	int offset;
+
+	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&m_pMaxPlayerCount);
+	if( !m_pMaxPlayerCount ) {
+		g_pSM->LogError(myself, "Can't get the \"WarpMaxPlayers\" signature: %x", m_pMaxPlayerCount);
+		return;
+	}
+
+	if(g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset)) {
+		m_pMaxPlayerCount += offset;
+	}
+
+	SetMemPatchable(m_pMaxPlayerCount, 1);
+	*m_pMaxPlayerCount = static_cast<uint8_t>(TEAM_SIZE - 1);
+
+	m_isPatched = true;
+}
+
+void WarpMaxPlayers::Unpatch() {
+	if(!m_isPatched) return;
+	
+	if(m_pMaxPlayerCount) { *m_pMaxPlayerCount = 4; }
+	
+	m_isPatched = false;
+}

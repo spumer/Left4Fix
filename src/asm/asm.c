@@ -336,11 +336,6 @@ int copy_bytes(unsigned char *func, unsigned char* dest, int required_len) {
 	return bytecount;
 }
 
-// replace address in specific CALL instruction to the given function address
-void replace_call_addr(void* src, void* dest) {
-	*(long*)((unsigned char*)src+1) = (long)((unsigned char*)dest - ((unsigned char*)src + OP_CALL_SIZE));
-}
-
 //insert a specific JMP instruction at the given location
 void inject_jmp(void* src, void* dest) {
 	*(unsigned char*)src = OP_JMP;

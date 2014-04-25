@@ -32,6 +32,7 @@
 #ifndef _INCLUDE_SOURCEMOD_DETOUR_GET_PLAYER_BY_CHARACTER_H_
 #define _INCLUDE_SOURCEMOD_DETOUR_GET_PLAYER_BY_CHARACTER_H_
 #include "detour_template.h"
+#include "detour_function.h"
 #include <stdint.h>
 
 namespace Detours {
@@ -40,7 +41,7 @@ class OnGetCompletionByCharacter;
 
 typedef int (__thiscall OnGetCompletionByCharacter::*GetCompletionByCharFunc)(int, int);
 
-class OnGetCompletionByCharacter: public DetourTemplate<GetCompletionByCharFunc, OnGetCompletionByCharacter>
+class OnGetCompletionByCharacter: public DetourTemplate<GetCompletionByCharFunc, OnGetCompletionByCharacter, DetourFunction>
 {
 private: //note: implementation of DetourTemplate abstracts
 

@@ -28,9 +28,6 @@ void check_thunks(unsigned char *dest, unsigned char *pc);
 //http://www.devmaster.net/forums/showthread.php?t=2311
 int copy_bytes(unsigned char *func, unsigned char* dest, int required_len);
 
-// replace address in specific CALL instruction to the given function address
-void replace_call_addr(void* src, void* dest);
-
 //insert a specific JMP instruction at the given location
 void inject_jmp(void* src, void* dest);
 

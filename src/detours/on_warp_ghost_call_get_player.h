@@ -1,8 +1,8 @@
 /**
  * vim: set ts=4 :
  * =============================================================================
- * Left 4 Downtown SourceMod Extension
- * Copyright (C) 2009 Igor "Downtown1" Smirnov.
+ * Left 4 Fix SourceMod Extension
+ * Copyright (C) 2014 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -31,53 +31,31 @@
 
 #pragma once
 
-#include "../extension.h"
-#include "../codepatch/icodepatch.h"
+#include <stdint.h>
+#include "detour_template.h"
+#include "detour_call.h"
 
 
-struct patch_t;
+namespace Detours {
+	
+class OnWarpGhostCallGetPlayer;
 
+typedef CBaseEntity* (*CTerrorPlayer_GetPlayerByCharacterFunc)(int);
 
-class Detour : public ICodePatch
+class OnWarpGhostCallGetPlayer: public DetourTemplate<CTerrorPlayer_GetPlayerByCharacterFunc, OnWarpGhostCallGetPlayer, DetourCall>
 {
-protected: //note: implemented by direct superclass
-	static IGameConfig *gameconf;
-	static ISourcePawnEngine *spengine;
+private: //note: implementation of DetourTemplate abstracts
 
-	unsigned char *signature;
-	const char *signatureName;
+	static CBaseEntity* GetPlayerByCharacterDetour(int);
 
-	unsigned char *trampoline;
+	virtual const char* GetSignatureName() { return nullptr; }
+	virtual unsigned char *GetSignatureAddress();
 
-	patch_t* m_pRestore;
-
-	//save the trampoline pointer
-	virtual void SetTrampoline(void *trampoline) = 0;
-
-	//return a void* to the detour function
-	virtual void *GetDetourRaw() = 0;
-
-	virtual void PatchFromSignature(const char *signatureName, void *targetFunction, unsigned char *&originalFunction, unsigned char *&signature);
-	virtual void PatchFromAddress(void *targetFunction, unsigned char *&originalFunction, unsigned char *&signature) = 0;
-
-public:
-	bool isPatched;
-	
-	//Initialize the Detour classes before ever calling Patch()
-	static void Init(ISourcePawnEngine *spengine, IGameConfig *gameconf);
-
-	Detour();
-	virtual ~Detour();
-
-	// enable the detour logic already implemented
-	virtual void Patch();
-
-	// you should implement disable the detour logic by yourself
-	virtual void Unpatch() {}
-
-	// get the signature name (i.e. "SpawnTank") from the game conf
-	virtual const char *GetSignatureName() = 0;
-	
-	virtual unsigned char *GetSignatureAddress() { return nullptr; }
+	//notify our patch system which function should be used as the detour
+	virtual CTerrorPlayer_GetPlayerByCharacterFunc GetDetour()
+	{
+		return &OnWarpGhostCallGetPlayer::GetPlayerByCharacterDetour;
+	}
+};
 
 };

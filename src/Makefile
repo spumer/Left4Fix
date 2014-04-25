@@ -20,8 +20,10 @@ PROJECT = left4fix
 #USEMETA = true
 
 OBJECTS = asm/asm.c sdk/smsdk_ext.cpp extension.cpp natives.cpp util.cpp routine.cpp \
-		detours/detour.cpp detours/on_revived_by_defib.cpp detours/on_recompute_versus_completion.cpp \
-		detours/on_get_completion_by_character.cpp codepatch/patchmanager.cpp codepatch/warp_code_linux.cpp
+		detours/detour.cpp detours/detour_function.cpp detours/detour_call.cpp \
+		detours/on_revived_by_defib.cpp detours/on_recompute_versus_completion.cpp \
+		detours/on_get_completion_by_character.cpp codepatch/patchmanager.cpp codepatch/warp_max_players.cpp \
+		detours/on_warp_ghost_call_get_player.cpp
 
 ifeq "$(TEAM_SIZE)" "8"
 	OBJECTS += codepatch/score_code_lite.cpp

@@ -33,6 +33,8 @@
 #define _INCLUDE_SOURCEMOD_DETOUR_ON_REVIVED_H_
 
 #include "detour_template.h"
+#include "detour_function.h"
+
 
 namespace Detours {
 	
@@ -40,7 +42,7 @@ class RevivedByDefib;
 
 typedef int (__thiscall RevivedByDefib::*RevivedByDefibFunc)(CBaseEntity*, void*);
 
-class RevivedByDefib: public DetourTemplate<RevivedByDefibFunc, RevivedByDefib>
+class RevivedByDefib: public DetourTemplate<RevivedByDefibFunc, RevivedByDefib, DetourFunction>
 {
 private: //note: implementation of DetourTemplate abstracts
 
