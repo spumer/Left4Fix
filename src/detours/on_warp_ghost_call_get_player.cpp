@@ -50,21 +50,18 @@ namespace Detours
 			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
 			if(!pInfo || pInfo->GetTeamIndex() != 2 || pInfo->IsObserver()) continue;
 
-			if(skip <= 0) {
+			pPlayer = pCurPlayer;
+			if(skip-- <= 0) {
 				L4D_DEBUG_LOG("GetPlayerByCharacterDetour was found: name=%s", pInfo->GetName());
-				pPlayer = pCurPlayer;
 				break;	
 			}
-			--skip;
+		}
 
-			if(!pPlayer) {
-				pPlayer = pCurPlayer;
-			}
+		if(!pPlayer) {
+			// this a static function detour -- no "this" pointer
+			pPlayer = (GetTrampoline())(survivorType);
 		}
 		return pPlayer;
-
-		// this a static function detour -- no "this" pointer
-		// return (GetTrampoline())(survivorType);
 	}
 
 	unsigned char* OnWarpGhostCallGetPlayer::GetSignatureAddress() {
