@@ -91,13 +91,13 @@ namespace Detours
 			}
 		}
 
-		int client, result = 0;
+		int result = 0;
 		CBaseEntity *pPlayer;
 		IPlayerInfo *pInfo;
 		IGamePlayer *pGamePlayer;
 
 		uint32_t *pCompl = g_iHighestVersusSurvivorCompletion;
-		for(client = 1; client <= 32; ++client) {
+		for(int client = 1, survivors = 0; client <= 32; ++client) {
 			pPlayer = gamehelpers->ReferenceToEntity(client);
 			if(!pPlayer) continue;
 
@@ -109,14 +109,17 @@ namespace Detours
 
 			if(pInfo->GetTeamIndex() == 2) {
 				if(pInfo->IsObserver()) continue;
+				++survivors;
+
+				// Break loop when g_iHighestVersusSurvivorCompletion buffer can't take next value
+				if(survivors > TEAM_SIZE) {
+					g_pSM->LogError(myself, "Attention! TEAM_SIZE limit is exceeded. Check code which create additional survivors.");
+					break;
+				}
+
 				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
 				result += *pCompl++;
 				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
-			
-				// Break loop when g_iHighestVersusSurvivorCompletion buffer is filled
-				if((TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion)) == 0) {
-					break;
-				}
 			}
 		}
 		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
