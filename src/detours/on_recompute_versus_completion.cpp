@@ -111,24 +111,34 @@ namespace Detours
 				if(pInfo->IsObserver()) continue;
 				++survivors;
 
-				// Break loop when g_iHighestVersusSurvivorCompletion buffer can't take next value
-				if(survivors > TEAM_SIZE) {
-					g_pSM->LogError(myself, "Attention! TEAM_SIZE limit is exceeded. Check code which create additional survivors.");
-					break;
-				}
+				// Save actual score for player
+				g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
+				L4D_DEBUG_LOG("Player: index=%d, name=%s, score=%d", client, pInfo->GetName(), g_scores[client]);
 
-				*pCompl = g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
-				result += *pCompl++;
-				L4D_DEBUG_LOG("Player %d: %d", client, g_scores[client]);
+				// No reason add zero to result
+				// This actually fix the situation when survivor changed the team
+				// Team changing leads to create additional bot and then add him to team
+				// Only after this real player will be placed to requested team
+				// When changing team in progress the both players (bot and human) has a 0 points
+				if(g_scores[client] != 0) {
+					// Break loop when g_iHighestVersusSurvivorCompletion buffer can't take next value
+					if(survivors > TEAM_SIZE) {
+						g_pSM->LogError(myself, "Attention! TEAM_SIZE limit is exceeded. Check code which create additional survivors.");
+						break;
+					}
+
+					*pCompl = g_scores[client];
+					result += *pCompl++;
+				}
 			}
 		}
+
 		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
 
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 			  [](const void* p1, const void* p2){
 				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
 			  });
-		// L4D_DEBUG_LOG("myRecompute return: Alive(%d) + Die(%d) = %d.", result - dieScore, dieScore, result);
 		return result;
 	}
 }
