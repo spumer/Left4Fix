@@ -36,7 +36,18 @@
 			{
 				"linux"		"-19"
 			}
+
+			"Tiebreak_TEAM_SIZE_A"
+			{
+				"linux"		"680"
+			}
+
+			"Tiebreak_TEAM_SIZE_B"
+			{
+				"linux"		"689"
+			}
 		}
+
 		"Signatures"
 		{
 			"CTerrorPlayer_WarpGhostToInitialPosition"
@@ -56,6 +67,15 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer20GetPlayerByCharacterE21SurvivorCharacterType"
+
+			}
+
+			"CDirectorVersusMode_EndVersusModeRound"
+			{
+				"library"	"server"
+				"linux"		"@_ZN19CDirectorVersusMode18EndVersusModeRoundEb"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x57\x8B\xF9\xE8\x2A\x2A\x2A\x2A\x84\xC0\x0F\x84"
+				/* 55 8B EC 83 EC ? 57 8B F9 E8 ? ? ? ? 84 C0 0F 84 */
 			}
 
 			"CTerrorGameRules_RecomputeVersusCompletion"

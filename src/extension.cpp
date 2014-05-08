@@ -36,6 +36,7 @@
 #include "codepatch/autopatch.h"
 #include "codepatch/score_code.h"
 #include "codepatch/warp_max_players.h"
+#include "codepatch/tiebreak.h"
 
 #include "detours/on_get_completion_by_character.h"
 #include "detours/on_recompute_versus_completion.h"
@@ -125,6 +126,7 @@ void Left4Fix::SDK_OnAllLoaded() {
 	g_PatchManager.Register(new AutoPatch<Detours::RevivedByDefib>());
 	g_PatchManager.Register(new AutoPatch<Detours::OnWarpGhostCallGetPlayer>());
 	g_PatchManager.Register(new AutoPatch<WarpMaxPlayers>());
+	g_PatchManager.Register(new AutoPatch<Tiebreak>());
 
 	sharesys->AddNatives(myself, g_Left4FixNatives);
 	sharesys->RegisterLibrary(myself, "Left4Fix");
