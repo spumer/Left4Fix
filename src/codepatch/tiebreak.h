@@ -37,9 +37,9 @@
 class Tiebreak : public ICodePatch {
 private:
 	bool m_isPatched;
-	uint8_t *m_pTeamSizeA, *m_pTeamSizeB;
+	uint8_t *m_regionData, m_regionLen, *m_regionAddr;
 public:
-	Tiebreak() : m_isPatched(false), m_pTeamSizeA(nullptr), m_pTeamSizeB(nullptr) {}
+	Tiebreak() : m_isPatched(false), m_regionData(nullptr), m_regionLen(0), m_regionAddr(nullptr) {}
 	~Tiebreak() { Unpatch(); }
 	void Patch();
 	void Unpatch();

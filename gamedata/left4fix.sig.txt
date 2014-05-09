@@ -37,14 +37,9 @@
 				"linux"		"-19"
 			}
 
-			"Tiebreak_TEAM_SIZE_A"
+			"Tiebreak_CheckCodeLen"
 			{
-				"linux"		"680"
-			}
-
-			"Tiebreak_TEAM_SIZE_B"
-			{
-				"linux"		"689"
+				"linux"		"104"
 			}
 		}
 
@@ -68,14 +63,6 @@
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer20GetPlayerByCharacterE21SurvivorCharacterType"
 
-			}
-
-			"CDirectorVersusMode_EndVersusModeRound"
-			{
-				"library"	"server"
-				"linux"		"@_ZN19CDirectorVersusMode18EndVersusModeRoundEb"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x57\x8B\xF9\xE8\x2A\x2A\x2A\x2A\x84\xC0\x0F\x84"
-				/* 55 8B EC 83 EC ? 57 8B F9 E8 ? ? ? ? 84 C0 0F 84 */
 			}
 
 			"CTerrorGameRules_RecomputeVersusCompletion"
@@ -182,7 +169,27 @@
 				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x0F\xB6\x45\x2A\x53\x56\x33\xF6\xF7\xD8"
 				/* 55 8B EC 83 EC ? 0F B6 45 ? 53 56 33 F6 F7 D8 */
 			}
+
+			// CTerrorGameRules::GetChapterScore(int)
+			"CTerrorGameRules_GetChapterScore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules15GetChapterScoreEi"
+			}
+
+			// CTerrorGameRules::GetTeamScore(int, bool)
+			"CTerrorGameRules_GetTeamScore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules12GetTeamScoreEib"
+			}
 			
+			"CHECK_CODE_Tiebreak"
+			{
+				"library"	"server"
+				"linux"		"\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC7\xA1"
+			}
+
 			"DIV_CODE_UpdateMarkersReached"
 			{
 				"library"	"server"

@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -29,59 +29,100 @@
  * Version: $Id$
  */
 
+#include "asm/asm.h"
 #include "tiebreak.h"
 #include "extension.h"
 #include "CDetour/detourhelpers.h"
 
 
+// for more details see the tiebreak_patch_info.txt
+const uint8_t g_TieBreak_patch[] =  {
+	0x89, 0xC3, 0xC7, 0x44, 0x24, 0x04, 0x01, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
+	0xE8, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x89, 0x45, 0xC4, 0xC7, 0x44, 0x24, 0x04, 0x02, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
+	0xE8, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+typedef struct TiebreakPatch_t {
+	uint8_t bytes[13];
+	uint8_t call_chapter_score_a[OP_CALL_SIZE];
+	uint8_t bytes2[14];
+	uint8_t call_chapter_score_b[OP_CALL_SIZE];
+} *pTiebreakPatch_t;
+
+
+int GetScoreDetour(void* pGameRules, int team) {
+	L4D_DEBUG_LOG("Called GetScoreDetour: this=%x, team=%d", pGameRules, team);
+	static int (*CTerrorGameRules_GetChapterScore)(void* pGameRules, int team);
+	static int (*CTerrorGameRules_GetTeamScore)(void* pGameRules, int team, bool campaign);
+
+	if( !CTerrorGameRules_GetChapterScore ) {
+		if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetChapterScore", (void**)&CTerrorGameRules_GetChapterScore) || !CTerrorGameRules_GetChapterScore ) {
+			g_pSM->LogError(myself, "Can't resolve CTerrorGameRules_GetChapterScore signature");
+			assert(0);
+		}
+	}
+	if( !CTerrorGameRules_GetTeamScore ) {
+		if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetTeamScore", (void**)&CTerrorGameRules_GetTeamScore) || !CTerrorGameRules_GetTeamScore ) {
+			g_pSM->LogError(myself, "Can't resolve CTerrorGameRules_GetTeamScore signature");
+			assert(0);
+		}
+	}
+
+	int result = CTerrorGameRules_GetChapterScore(pGameRules, team);
+	if(!result) {
+		// This detour called when score not moved yet to chapter section for second team
+		// And we retrieve it from source
+		result = CTerrorGameRules_GetTeamScore(pGameRules, team, false);
+	}
+
+	L4D_DEBUG_LOG("GetScoreDetour: result=%d", result);
+	return result;
+}
+
+
 void Tiebreak::Patch() {
 	if(m_isPatched) return;
 
-	uint8_t *base;
-	int teamA_offset;
-	int teamB_offset;
+	int need_nop;
+	pTiebreakPatch_t tiebreak_patch;
 
-	if( !g_pGameConf->GetMemSig("CDirectorVersusMode_EndVersusModeRound", (void **)&base) || !base ) {
-		g_pSM->LogError(myself, "Tiebreak -- Could not find 'base address'");
-		return;		
-	}
-
-	if( !g_pGameConf->GetOffset("Tiebreak_TEAM_SIZE_A", &teamA_offset) || !teamA_offset ) {
-		g_pSM->LogError(myself, "Tiebreak -- Could not find 'TEAM_SIZE A offset'");
+	if( !g_pGameConf->GetMemSig("CHECK_CODE_Tiebreak", (void **)&m_regionAddr) || !m_regionAddr ) {
+		g_pSM->LogError(myself, "Tiebreak -- Could not find 'CHECK_CODE_Tiebreak address'");
 		return;
 	}
 
-	if( !g_pGameConf->GetOffset("Tiebreak_TEAM_SIZE_B", &teamB_offset) || !teamB_offset ) {
-		g_pSM->LogError(myself, "Tiebreak -- Could not find 'TEAM_SIZE B offset'");
+	if( !g_pGameConf->GetOffset("Tiebreak_CheckCodeLen", &need_nop) || !need_nop ) {
+		g_pSM->LogError(myself, "Tiebreak -- Could not find 'Tiebreak_CheckCodeLen'");
 		return;
 	}
 
-	m_pTeamSizeA = base + teamA_offset;
-	m_pTeamSizeB = base + teamB_offset;
+	assert(static_cast<size_t>(need_nop) >= sizeof(TiebreakPatch_t));
 
-	SetMemPatchable(m_pTeamSizeB, 1);
-	SetMemPatchable(m_pTeamSizeA, 1);
+	SetMemPatchable(m_regionAddr, need_nop);
 
-	if(*m_pTeamSizeA != 4) {
-		g_pSM->LogError(myself, "Tiebreak TEAM_SIZE A is not default: %d", *m_pTeamSizeA);
-		return;
-	}
+	m_regionData = new uint8_t[need_nop];
+	m_regionLen = need_nop;
+	copy_bytes(/*src*/(unsigned char *)m_regionAddr, /*dst*/m_regionData, m_regionLen);
 
-	if(*m_pTeamSizeB != 4) {
-		g_pSM->LogError(myself, "Tiebreak TEAM_SIZE B is not default: %d", *m_pTeamSizeB);
-		return;
-	}
+	fill_nop(m_regionAddr, need_nop);
 
-	*m_pTeamSizeA = *m_pTeamSizeB = TEAM_SIZE;
+	tiebreak_patch = reinterpret_cast<pTiebreakPatch_t>(m_regionAddr);
+	copy_bytes(/*src*/(unsigned char *)g_TieBreak_patch, /*dst*/(unsigned char *)tiebreak_patch, /*len*/sizeof(TiebreakPatch_t));
+	replace_call_addr(tiebreak_patch->call_chapter_score_a, (void *)GetScoreDetour);
+	replace_call_addr(tiebreak_patch->call_chapter_score_b, (void *)GetScoreDetour);
 
 	m_isPatched = true;
+	L4D_DEBUG_LOG("Tiebreak code patched successfully");
 }
 
 void Tiebreak::Unpatch() {
 	if(!m_isPatched) return;
 
-	if(m_pTeamSizeA) *m_pTeamSizeA = 4;
-	if(m_pTeamSizeB) *m_pTeamSizeB = 4;
+	if(m_regionData) {
+		copy_bytes(m_regionData, m_regionAddr, m_regionLen);
+		delete[] m_regionData;
+	}
 
 	m_isPatched = false;
 }
