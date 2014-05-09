@@ -37,6 +37,9 @@ void fill_nop(void* src, unsigned int len);
 //evaluate a JMP at the target
 void* eval_jump(void* src);
 
+// replace address in specific CALL instruction to the given function address
+void replace_call_addr(void* src, void* dest);
+
 #ifdef __cplusplus
 }
 #endif
