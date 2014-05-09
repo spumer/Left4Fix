@@ -7,7 +7,7 @@
  * @brief	Return the supported team size by this extension instance.
  * For more information read the wiki: https://github.com/spumer/Left4Fix/wiki/How-it-works-inside
  * 
- * @return	TEAM_SIZE value which used for compile this extension
+ * @return	TEAM_SIZE value which used when compile this extension
  */
 native L4FIX_GetSupportedTeamSize();
 
