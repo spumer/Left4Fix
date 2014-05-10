@@ -41,14 +41,23 @@
 
 /*
 typedef struct {
+	uint8_t unknownData[888];					// 0 bytes
+	uint32_t versus_score_bonus[2];				// 888 bytes	// temp buffer to store chapter score for second team
+	uint32_t versus_campaign_score[2];			// 896 bytes
+	uint32_t chapter_score[2];					// 904 bytes	// full filled only after EndVersusRoundEnd
+	uint8_t unknownData1[72];					// 912 bytes
 	uint32_t survivors_completion_score[2][4];	// 976 bytes
 	uint32_t survivors_death_score[2][4];		// 1008 bytes
 	uint8_t survivors_escaped[4];				// 1040 bytes	// in-game buffer
 	uint32_t versus_completion_score;			// 1044 bytes	// in-game buffer
 	uint32_t versus_survival_multiplier[2];		// 1048 bytes	// user count who survived
-	uint8_t unkownData[100];			      	// 1056 bytes
+	uint8_t unknownData2[92];			      	// 1056 bytes
+	uint8_t areTeamsFlipped						// 1148 bytes
+	uint8_t roundFirstHalf						// 1149 bytes
+	uint8_t isTransitionToNextMap;		      	// 1150 bytes
+	uint8_t unknownData3[5];				    // 1151 bytes
 	uint32_t sacrafice_escaped_mask;			// 1156 bytes	// e.g. 1000 0110 0000 0001 1000 0110 0000 0001 where bit position is a client index
-} versus_completion_t;
+} CTerrorGameRules_t;
 */
 
 namespace Detours
