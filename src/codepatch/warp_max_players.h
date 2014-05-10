@@ -1,8 +1,8 @@
 /**
  * vim: set ts=4 :
  * =============================================================================
- * Left 4 Downtown SourceMod Extension
- * Copyright (C) 2009 Igor "Downtown1" Smirnov.
+ * Left 4 Fix SourceMod Extension
+ * Copyright (C) 2014 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -31,53 +31,15 @@
 
 #pragma once
 
-#include "../extension.h"
-#include "../codepatch/icodepatch.h"
+#include "icodepatch.h"
 
-
-struct patch_t;
-
-
-class Detour : public ICodePatch
-{
-protected: //note: implemented by direct superclass
-	static IGameConfig *gameconf;
-	static ISourcePawnEngine *spengine;
-
-	unsigned char *signature;
-	const char *signatureName;
-
-	unsigned char *trampoline;
-
-	patch_t* m_pRestore;
-
-	//save the trampoline pointer
-	virtual void SetTrampoline(void *trampoline) = 0;
-
-	//return a void* to the detour function
-	virtual void *GetDetourRaw() = 0;
-
-	virtual void PatchFromSignature(const char *signatureName, void *targetFunction, unsigned char *&originalFunction, unsigned char *&signature);
-	virtual void PatchFromAddress(void *targetFunction, unsigned char *&originalFunction, unsigned char *&signature) = 0;
-
+class WarpMaxPlayers : public ICodePatch {
+private:
+	bool m_isPatched;
+	uint8_t* m_pMaxPlayerCount;
 public:
-	bool isPatched;
-	
-	//Initialize the Detour classes before ever calling Patch()
-	static void Init(ISourcePawnEngine *spengine, IGameConfig *gameconf);
-
-	Detour();
-	virtual ~Detour();
-
-	// enable the detour logic already implemented
-	virtual void Patch();
-
-	// you should implement disable the detour logic by yourself
-	virtual void Unpatch() {}
-
-	// get the signature name (i.e. "SpawnTank") from the game conf
-	virtual const char *GetSignatureName() = 0;
-	
-	virtual unsigned char *GetSignatureAddress() { return nullptr; }
-
+	WarpMaxPlayers() : m_isPatched(false), m_pMaxPlayerCount(nullptr) {}
+	~WarpMaxPlayers() { Unpatch(); }
+	void Patch();
+	void Unpatch();
 };

@@ -21,13 +21,50 @@
 				"linux"		"75"
 				"windows"	"47"
 			}
+		
 			"TheDirector"
 			{
 				"windows"	"12"
 			}
+		
+			"WarpGhost_GetPlayerByCharacter"
+			{
+				"linux"		"5"
+			}
+
+			"WarpGhost_MaxPlayerCount"
+			{
+				"linux"		"-19"
+			}
+
+			"Tiebreak_CheckCodeLen"
+			{
+				"linux"		"104"
+			}
 		}
+
 		"Signatures"
 		{
+			"CTerrorPlayer_WarpGhostToInitialPosition"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer26WarpGhostToInitialPositionEb"
+			}
+
+			"WarpGhost_GetPlayerByCharacter"
+			{
+				"library"	"server"
+				"linux"		"\x31\xC0\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\x85\xC0\x89\xC6\x74\x0F\x8B\x00\x89\x34\x24"
+			}
+
+			// int CTerrorPlayer::GetPlayerByCharacter(int SurvivorCharacterType)
+			"CTerrorPlayer_GetPlayerByCharacter"
+			{
+				"library"	"server"
+				"linux"		"@_ZN13CTerrorPlayer20GetPlayerByCharacterE21SurvivorCharacterType"
+
+			}
+
 			"CTerrorGameRules_RecomputeVersusCompletion"
 			{
 				"library"	"server"
@@ -132,7 +169,27 @@
 				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x0F\xB6\x45\x2A\x53\x56\x33\xF6\xF7\xD8"
 				/* 55 8B EC 83 EC ? 0F B6 45 ? 53 56 33 F6 F7 D8 */
 			}
+
+			// CTerrorGameRules::GetChapterScore(int)
+			"CTerrorGameRules_GetChapterScore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules15GetChapterScoreEi"
+			}
+
+			// CTerrorGameRules::GetTeamScore(int, bool)
+			"CTerrorGameRules_GetTeamScore"
+			{
+				"library"	"server"
+				"linux"		"@_ZN16CTerrorGameRules12GetTeamScoreEib"
+			}
 			
+			"CHECK_CODE_Tiebreak"
+			{
+				"library"	"server"
+				"linux"		"\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC7\xA1"
+			}
+
 			"DIV_CODE_UpdateMarkersReached"
 			{
 				"library"	"server"

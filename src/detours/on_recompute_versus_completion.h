@@ -32,6 +32,7 @@
 #ifndef _INCLUDE_SOURCEMOD_DETOUR_RECOMPUTE_VERSUS_COMPLETION_H_
 #define _INCLUDE_SOURCEMOD_DETOUR_RECOMPUTE_VERSUS_COMPLETION_H_
 #include "detour_template.h"
+#include "detour_function.h"
 
 namespace Detours {
 	
@@ -39,7 +40,7 @@ class RecomputeVersusCompletion;
 
 typedef int (__thiscall RecomputeVersusCompletion::*OnRecomputeFunc)(bool);
 
-class RecomputeVersusCompletion: public DetourTemplate<OnRecomputeFunc, RecomputeVersusCompletion>
+class RecomputeVersusCompletion: public DetourTemplate<OnRecomputeFunc, RecomputeVersusCompletion, DetourFunction>
 {
 private: //note: implementation of DetourTemplate abstracts
 

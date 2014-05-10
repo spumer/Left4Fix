@@ -2,7 +2,7 @@
  * vim: set ts=4 :
  * =============================================================================
  * Left 4 Fix SourceMod Extension
- * Copyright (C) 2013 Spumer.
+ * Copyright (C) 2014 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -29,19 +29,33 @@
  * Version: $Id$
  */
 
-#ifndef _INCLUDE_SOURCEMOD_PATCH_PLAYERS_COUNT_H_
-#define _INCLUDE_SOURCEMOD_PATCH_PLAYERS_COUNT_H_
+#pragma once
 
-#include "icodepatch.h"
+#include <stdint.h>
+#include "detour_template.h"
+#include "detour_call.h"
 
-class PlayersCount : public ICodePatch {
-private:
-	char *m_pRecomputeVersusCompletionAddress;
-public:	
-	PlayersCount() : m_pRecomputeVersusCompletionAddress(0) {}
-	~PlayersCount() { Unpatch(); }
-	void Patch();
-	void Unpatch();
+
+namespace Detours {
+	
+class OnWarpGhostCallGetPlayer;
+
+typedef CBaseEntity* (*CTerrorPlayer_GetPlayerByCharacterFunc)(int);
+
+class OnWarpGhostCallGetPlayer: public DetourTemplate<CTerrorPlayer_GetPlayerByCharacterFunc, OnWarpGhostCallGetPlayer, DetourCall>
+{
+private: //note: implementation of DetourTemplate abstracts
+
+	static CBaseEntity* GetPlayerByCharacterDetour(int);
+
+	virtual const char* GetSignatureName() { return nullptr; }
+	virtual unsigned char *GetSignatureAddress();
+
+	//notify our patch system which function should be used as the detour
+	virtual CTerrorPlayer_GetPlayerByCharacterFunc GetDetour()
+	{
+		return &OnWarpGhostCallGetPlayer::GetPlayerByCharacterDetour;
+	}
 };
 
-#endif
+};

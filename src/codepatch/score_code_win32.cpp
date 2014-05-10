@@ -34,9 +34,6 @@
 #include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
 
-#define OP_CALL 0xE8
-#define OP_CALL_SIZE 5
-
 #define OP_MOV 0xA1
 #define OP_MOV_SIZE 5
 
@@ -51,16 +48,6 @@ unsigned char AddSurvivorStats_patch[] = { 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0x
 unsigned char GetVersusCompletion_orig[]  = { 0x33, 0xC9, 0xC1, 0xF8, 0x02 };
 unsigned char GetVersusCompletion_patch[] = { 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0x31, 0xD2, 0xF7, 0xF1, 0x33, 0xC9 };
 
-#ifdef _DEBUG
-void memDump(unsigned char *pAddr, size_t len) {
-	g_pSmmAPI->ConPrintf("Start dump at: %p\n", pAddr);
-	size_t llen = len;
-	while(len--) {
-		g_pSmmAPI->ConPrintf("%02x", *pAddr++ & 0xFF);
-	}
-	g_pSmmAPI->ConPrintf("\nDump end. Next byte: %p. Len: %d\n", pAddr, llen);
-}
-#endif
 
 void ScoreCode::Patch() {
 	if(m_isPatched) return;
@@ -78,7 +65,7 @@ void ScoreCode::Patch() {
 	// prepare the trampoline
 	m_injectMarker = (unsigned char *)sengine->AllocatePageMemory(sizeof(UpdateMarkersReached_patch) + OP_JMP_SIZE);
 	copy_bytes(UpdateMarkersReached_patch, m_injectMarker, sizeof(UpdateMarkersReached_patch));
-	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_CALL_SIZE);	
+	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_JMP_SIZE);	
 	// copy original code to our buffer
 	SetMemPatchable(m_pMarkers, sizeof(UpdateMarkersReached_orig));
 	copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig));
@@ -100,7 +87,7 @@ void ScoreCode::Patch() {
 	// prepare the trampoline
 	m_injectCompl = (unsigned char *)sengine->AllocatePageMemory(sizeof(GetVersusCompletion_patch) + OP_JMP_SIZE);
 	copy_bytes(GetVersusCompletion_patch, m_injectCompl, sizeof(GetVersusCompletion_patch));
-	inject_jmp(m_injectCompl + sizeof(GetVersusCompletion_patch), m_pCompletion + OP_CALL_SIZE);
+	inject_jmp(m_injectCompl + sizeof(GetVersusCompletion_patch), m_pCompletion + OP_JMP_SIZE);
 	// copy original code to our buffer
 	SetMemPatchable(m_pCompletion, sizeof(GetVersusCompletion_orig));
 	copy_bytes(m_pCompletion, GetVersusCompletion_orig, sizeof(GetVersusCompletion_orig));

@@ -382,6 +382,12 @@ void* eval_jump(void* src) {
 
 	return addr;
 }
+
+// replace address in specific CALL instruction to the given function address
+void replace_call_addr(void* src, void* dest) {
+	*(long*)((unsigned char*)src+1) = (long)((unsigned char*)dest - ((unsigned char*)src + OP_CALL_SIZE));
+}
+
 /*
 from ms detours package
 static bool detour_is_imported(PBYTE pbCode, PBYTE pbAddress)

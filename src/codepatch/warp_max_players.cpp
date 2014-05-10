@@ -2,7 +2,7 @@
  * vim: set ts=4 :
  * =============================================================================
  * Left 4 Fix SourceMod Extension
- * Copyright (C) 2013 Spumer.
+ * Copyright (C) 2014 Spumer.
  * =============================================================================
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -29,27 +29,36 @@
  * Version: $Id$
  */
 
-#include "players_count.h"
 #include "extension.h"
+#include "warp_max_players.h"
 #include "CDetour/detourhelpers.h"
 
-void PlayersCount::Patch() {
-	int offset = 0;
-	g_pGameConf->GetMemSig("CTerrorGameRules_RecomputeVersusCompletion", (void **)&m_pRecomputeVersusCompletionAddress);
-	g_pGameConf->GetOffset("RecomputeVersusCompletion", &offset);
 
-	if(m_pRecomputeVersusCompletionAddress && offset) {
-		m_pRecomputeVersusCompletionAddress += offset;
-		
-		SetMemPatchable(m_pRecomputeVersusCompletionAddress, 1);
-		(*m_pRecomputeVersusCompletionAddress) = TEAM_SIZE;			//! TODO: Replace to convar.
+void WarpMaxPlayers::Patch() {
+	if(m_isPatched) return;
 	
-		g_pSmmAPI->ConPrintf("RecomputeVersusCompletion offset %d\nAnd byte now is: %02x\n", offset, m_pRecomputeVersusCompletionAddress[0] & 0xFF);
+	int offset;
+
+	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&m_pMaxPlayerCount);
+	if( !m_pMaxPlayerCount ) {
+		g_pSM->LogError(myself, "Can't get the \"WarpMaxPlayers\" signature: %x", m_pMaxPlayerCount);
+		return;
 	}
+
+	if(g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset)) {
+		m_pMaxPlayerCount += offset;
+	}
+
+	SetMemPatchable(m_pMaxPlayerCount, 1);
+	*m_pMaxPlayerCount = static_cast<uint8_t>(TEAM_SIZE - 1);
+
+	m_isPatched = true;
 }
 
-void PlayersCount::Unpatch() {
-	if(m_pRecomputeVersusCompletionAddress) {
-		(*m_pRecomputeVersusCompletionAddress) = 0x04;
-	}
+void WarpMaxPlayers::Unpatch() {
+	if(!m_isPatched) return;
+	
+	if(m_pMaxPlayerCount) { *m_pMaxPlayerCount = 4; }
+	
+	m_isPatched = false;
 }
