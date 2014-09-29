@@ -49,12 +49,15 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer26WarpGhostToInitialPositionEb"
+				"windows"	"\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x83\xEC\x58\x56\x8B\xF1\x8B\x06\x8B\x2A\x2A\x2A\x2A\x2A\x57"
+				/* 53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 83 EC 58 56 8B F1 8B 06 8B ? ? ? ? ? 57 */
 			}
 
 			"WarpGhost_GetPlayerByCharacter"
 			{
 				"library"	"server"
 				"linux"		"\x31\xC0\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\x85\xC0\x89\xC6\x74\x0F\x8B\x00\x89\x34\x24"
+				// TODO: this call inlined, call-replace technique not help
 			}
 
 			// int CTerrorPlayer::GetPlayerByCharacter(int SurvivorCharacterType)
@@ -62,7 +65,8 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN13CTerrorPlayer20GetPlayerByCharacterE21SurvivorCharacterType"
-
+				"windows"	"\x55\x8B\xEC\x8B\x45\x08\x83\xEC\x08\x83\xF8\x08\x75\x06\x33\xC0"
+				/* 55 8B EC 8B 45 08 83 EC 08 83 F8 08 75 06 33 C0 */
 			}
 
 			"CTerrorGameRules_RecomputeVersusCompletion"
@@ -151,10 +155,13 @@
 			}
 
 			// CTerrorGameRules::GetChapterScore(int)
+			// Multiple matches, but we need first
 			"CTerrorGameRules_GetChapterScore"
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules15GetChapterScoreEi"
+				"windows"	"\x55\x8B\xEC\x8B\x45\x08\x8B\x2A\x2A\x2A\x2A\x2A\x2A\x5D\xC2\x04"
+				/* 55 8B EC 8B 45 08 8B ? ? ? ? ? ? 5D C2 04 */
 			}
 
 			// CTerrorGameRules::GetTeamScore(int, bool)
@@ -162,12 +169,15 @@
 			{
 				"library"	"server"
 				"linux"		"@_ZN16CTerrorGameRules12GetTeamScoreEib"
+				"windows"	"\x55\x8B\xEC\x8B\x2A\x2A\x85\xC0\x2A\x2A\x33\xC0\x5D\xC2"
+				/* 55 8B EC 8B ? ? 85 C0 ? ? 33 C0 5D C2 */
 			}
 
 			"CHECK_CODE_Tiebreak"
 			{
 				"library"	"server"
 				"linux"		"\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC7\xA1"
+				"windows"	"\x6A\x02\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x6A\x03\x8B\xF0"
 			}
 
 			"DIV_CODE_UpdateMarkersReached"
