@@ -62,6 +62,7 @@ extern sp_nativeinfo_t g_Left4FixNatives[];
 
 namespace Detours {
 	int g_totalResult = 0;
+	int g_versusSurvivorCompletionOffset;
 	death_info_t g_dead_players[32];
 	uint32_t g_scores[32+1] = {0};
 	bool (__thiscall *AreTeamsFlipped)(const void*);
@@ -78,25 +79,50 @@ IGameEventManager2 *gameevents = NULL;
 
 SMEXT_LINK(&g_Left4Fix);
 
+
+void** get_director_pointer(char *error, size_t maxlength) {
+	void *addr;
+
+#ifdef WIN32
+	int offset = 0;
+	if (!g_pGameConf->GetMemSig("DirectorMusicBanks_OnRoundStart", (void **)&addr) || !addr)
+	{
+		UTIL_Format(error, maxlength, "Could not read DirectorMusicBanks_OnRoundStart signature");
+		return nullptr;
+	}
+	if (!g_pGameConf->GetOffset("TheDirector", &offset) || !offset)
+	{
+		UTIL_Format(error, maxlength, "Could not read pDirector signature");
+		return nullptr;
+	}
+	return *reinterpret_cast<void ***>((unsigned char*)addr + offset);
+#else
+	if(!g_pGameConf->GetMemSig("g_pDirector", (void **)&addr) || !addr)
+	{
+		UTIL_Format(error, maxlength, "Could not read pDirector signature");
+		return nullptr;
+	}
+	return reinterpret_cast<void **>(addr);
+#endif
+}
+
+
 bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	char conf_error[255] = "";
-	void *addr;
-	
+
 	if (!gameconfs->LoadGameConfigFile(GAMECONFIG_FILE, &g_pGameConf, conf_error, sizeof(conf_error))) {
 		if (conf_error[0]) {
 			UTIL_Format(error, maxlength, "Could not read " GAMECONFIG_FILE ".txt: %s", conf_error);
 		}
 		return false;
 	}
-	
-	/* g_pDirector */
-	if(!g_pGameConf->GetMemSig("g_pDirector", (void **)&addr) || !addr)
+
+	g_pDirector = get_director_pointer(error, maxlength);
+	if(!g_pDirector)
 	{
-	    UTIL_Format(error, maxlength, "Could not read pDirector signature");
 		return false;
 	}
-	g_pDirector = reinterpret_cast<void **>(addr);
-	
+
 	if(!g_pGameConf->GetMemSig("CDirector_AreTeamsFlipped", (void **)&Detours::AreTeamsFlipped) || !Detours::AreTeamsFlipped)
 	{
 	    UTIL_Format(error, maxlength, "Could not read CDirector_AreTeamsFlipped signature");
@@ -106,6 +132,12 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	if(!g_pGameConf->GetMemSig("CGameRulesProxy_NotifyNetworkStateChanged", (void **)&Detours::NotifyNetworkStateChanged) || !Detours::NotifyNetworkStateChanged)
 	{
 	    UTIL_Format(error, maxlength, "Could not read CGameRulesProxy_NotifyNetworkStateChanged signature");
+		return false;
+	}
+
+	if (!g_pGameConf->GetOffset("VersusCompletionScore", &g_versusSurvivorCompletionOffset) || !g_versusSurvivorCompletionOffset)
+	{
+		UTIL_Format(error, maxlength, "Could not read VersusCompletionScore offset");
 		return false;
 	}
 

@@ -141,6 +141,7 @@ extern CGlobalVars *gpGlobals;
 
 namespace Detours {
 	extern int g_totalResult;
+	extern int g_versusSurvivorCompletionOffset;
 	extern death_info_t g_dead_players[32];
 	extern uint32_t g_scores[32+1];
 	extern uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE];

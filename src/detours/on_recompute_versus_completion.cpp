@@ -75,7 +75,7 @@ namespace Detours
 		i = myRecompute(this);
 		if(i > g_totalResult) g_totalResult = i;
 
-		uint32_t (*piVersusSurvivorCompletion)[4] = reinterpret_cast<uint32_t(*)[4]>((unsigned char *)(this) + 976);
+		uint32_t (*piVersusSurvivorCompletion)[4] = reinterpret_cast<uint32_t(*)[4]>((unsigned char *)(this) + g_versusSurvivorCompletionOffset);
 
 		/**
 		* Fix score shows by pressing TAB
@@ -98,7 +98,7 @@ namespace Detours
 	* Recompute completion for all survivors. Sort results.
 	*/
 	int RecomputeVersusCompletion::myRecompute(void *pGameRules) {
-		static int (*GetVersusCompletionFunc)(void *, CBaseEntity*);
+		static int (__thiscall *GetVersusCompletionFunc)(void *, CBaseEntity*);
 		if(!GetVersusCompletionFunc) {
 			if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&GetVersusCompletionFunc) || !GetVersusCompletionFunc ) {
 				g_pSM->LogError(myself, "Can't resolve CTerrorGameRules_GetVersusCompletion signature");

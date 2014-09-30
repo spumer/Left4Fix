@@ -4,6 +4,12 @@
 	{
 		"Offsets"
 		{
+			"VersusCompletionScore"
+			{
+				"linux"		"976"
+				"windows"	"984"
+			}
+
 			"MarkerDivisor"
 			{
 				"linux"		"112"
