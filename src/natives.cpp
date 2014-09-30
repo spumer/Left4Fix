@@ -44,7 +44,7 @@ cell_t GetSupportedTeamSize(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-sp_nativeinfo_t g_Left4FixNatives[] {
+sp_nativeinfo_t g_Left4FixNatives[] = {
 	{"L4FIX_GetSurvivorScore",	GetSurvivorScore},
 	{"L4FIX_GetSupportedTeamSize", GetSupportedTeamSize},
 	{NULL,					NULL}

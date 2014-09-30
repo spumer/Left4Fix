@@ -144,8 +144,8 @@ namespace Detours {
 	extern death_info_t g_dead_players[32];
 	extern uint32_t g_scores[32+1];
 	extern uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE];
-	extern bool (*AreTeamsFlipped)(const void*);
-	extern void (*NotifyNetworkStateChanged)(void);
+	extern bool (__thiscall *AreTeamsFlipped)(const void*);
+	extern void (__thiscall *NotifyNetworkStateChanged)(void);
 };
 
 #include <compat_wrappers.h>

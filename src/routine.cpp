@@ -44,7 +44,8 @@ void r_nowAlive(const Vector& position, death_info_t *data, size_t len) {
 
 void r_nowDead(const Vector& position, uint32_t score, death_info_t *data) {
 	GET_FIRST_EMPTY_ELEMENT(data);
-	*data = { position, score };	// c++0x style
+	data->m_Pos = position;
+	data->m_DeathDist = score;
 }
 
 int r_appendScores(uint32_t *pCompl, size_t compl_max_inserts, const death_info_t *begin, size_t data_len) {

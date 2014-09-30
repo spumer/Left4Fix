@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="SourceMod SDK">
+      <UniqueIdentifier>{31958233-BB2D-4e41-A8F9-CE8A4684F436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\detours">
+      <UniqueIdentifier>{d6820225-8cda-4047-ac9f-dc854469a3f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\detours">
+      <UniqueIdentifier>{8a218825-2fa2-4900-9e45-12d82f0aadf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\codepatch">
+      <UniqueIdentifier>{5c7c15f7-9e1d-4c75-ac3b-0f98e5a0e055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\codepatch">
+      <UniqueIdentifier>{b6226440-06c9-4141-8485-74447f3a1230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\asm">
+      <UniqueIdentifier>{cdedf8af-8a7b-45a8-9e1d-2694a80b587f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\asm">
+      <UniqueIdentifier>{c1e04715-9c6e-413b-ad3d-c154017726ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CDetour">
+      <UniqueIdentifier>{7fcede73-1cbf-4264-98fa-2b2fdded879f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\extension.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sdk\smsdk_ext.cpp">
+      <Filter>SourceMod SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\routine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\detour.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\detour_call.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\detour_function.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\on_get_completion_by_character.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\on_recompute_versus_completion.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\on_revived_by_defib.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\on_warp_ghost_call_get_player.cpp">
+      <Filter>Source Files\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\codepatch\patchmanager.cpp">
+      <Filter>Source Files\codepatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\codepatch\score_code_win32.cpp">
+      <Filter>Source Files\codepatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\codepatch\tiebreak.cpp">
+      <Filter>Source Files\codepatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\codepatch\warp_max_players.cpp">
+      <Filter>Source Files\codepatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\asm\asm.c">
+      <Filter>Source Files\asm</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\extension.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdk\smsdk_config.h">
+      <Filter>SourceMod SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sdk\smsdk_ext.h">
+      <Filter>SourceMod SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\event_player_death.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\event_round_start.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\routine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\auto_forward.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\detour.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\detour_call.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\detour_function.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\detour_template.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\on_get_completion_by_character.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\on_recompute_versus_completion.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\on_revived_by_defib.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\on_warp_ghost_call_get_player.h">
+      <Filter>Header Files\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\autopatch.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\icodepatch.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\patch_utils.hpp">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\patchmanager.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\score_code.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\score_code_basic.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\score_code_lite.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\tiebreak.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\codepatch\warp_max_players.h">
+      <Filter>Header Files\codepatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\asm\asm.h">
+      <Filter>Header Files\asm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CDetour\detourhelpers.h">
+      <Filter>Header Files\CDetour</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

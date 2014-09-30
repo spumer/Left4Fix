@@ -62,6 +62,12 @@ typedef struct {
 
 namespace Detours
 {
+#ifdef WIN32
+	int cmp_uint_desc(const void* p1, const void* p2) {
+		return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
+	}
+#endif
+
 	int __thiscall RecomputeVersusCompletion::OnRecompute(bool arg) {
 		int i;
 		bool team = AreTeamsFlipped(*g_pDirector);
@@ -145,9 +151,14 @@ namespace Detours
 		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
 
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
-			  [](const void* p1, const void* p2){
+#ifdef WIN32
+			cmp_uint_desc
+#else
+			[] (const void* p1, const void* p2) {
 				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
-			  });
+			  }
+#endif
+		);
 		return result;
 	}
 }

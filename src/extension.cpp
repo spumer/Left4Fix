@@ -64,8 +64,8 @@ namespace Detours {
 	int g_totalResult = 0;
 	death_info_t g_dead_players[32];
 	uint32_t g_scores[32+1] = {0};
-	bool (*AreTeamsFlipped)(const void*);
-	void (*NotifyNetworkStateChanged)(void);
+	bool (__thiscall *AreTeamsFlipped)(const void*);
+	void (__thiscall *NotifyNetworkStateChanged)(void);
 	uint32_t g_iHighestVersusSurvivorCompletion[TEAM_SIZE] = {0};
 };
 
