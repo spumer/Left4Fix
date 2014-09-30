@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -36,7 +36,7 @@
 
 void WarpMaxPlayers::Patch() {
 	if(m_isPatched) return;
-	
+
 	int offset;
 
 	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&m_pMaxPlayerCount);
@@ -57,8 +57,8 @@ void WarpMaxPlayers::Patch() {
 
 void WarpMaxPlayers::Unpatch() {
 	if(!m_isPatched) return;
-	
+
 	if(m_pMaxPlayerCount) { *m_pMaxPlayerCount = 4; }
-	
+
 	m_isPatched = false;
 }

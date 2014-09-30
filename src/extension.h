@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -36,7 +36,7 @@
  * @file extension.h
  * @brief Sample extension code header.
  */
- 
+
 #ifdef _DEBUG
 #define L4D_DEBUG_LOG(...) g_pSmmAPI->ConPrintf(__VA_ARGS__);g_pSmmAPI->ConPrint("\n")
 #else
@@ -72,7 +72,7 @@ public:
 	 * @return			True to succeed loading, false to fail.
 	 */
 	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
-	
+
 	/**
 	 * @brief This is called right before the extension is unloaded.
 	 */
@@ -83,7 +83,7 @@ public:
 	 * Note: It is is a good idea to add natives here, if any are provided.
 	 */
 	virtual void SDK_OnAllLoaded();
-	
+
 	/**
 	 * @brief Called when the pause state is changed.
 	 */
@@ -96,7 +96,7 @@ public:
 	 * @param maxlength	Size of error message buffer.
 	 * @return			True if working, false otherwise.
 	 */
-	//virtual bool QueryRunning(char *error, size_t maxlength);	
+	//virtual bool QueryRunning(char *error, size_t maxlength);
 public:
 #if defined SMEXT_CONF_METAMOD
 	/**

@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -62,7 +62,7 @@ protected: //note: implemented by direct superclass
 
 public:
 	bool isPatched;
-	
+
 	//Initialize the Detour classes before ever calling Patch()
 	static void Init(ISourcePawnEngine *spengine, IGameConfig *gameconf);
 
@@ -77,7 +77,7 @@ public:
 
 	// get the signature name (i.e. "SpawnTank") from the game conf
 	virtual const char *GetSignatureName() = 0;
-	
+
 	virtual unsigned char *GetSignatureAddress() { return nullptr; }
 
 };

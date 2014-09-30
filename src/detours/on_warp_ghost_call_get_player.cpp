@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -31,12 +31,12 @@
 
 #include "extension.h"
 #include "on_warp_ghost_call_get_player.h"
- 
+
 namespace Detours
 {
 	CBaseEntity* OnWarpGhostCallGetPlayer::GetPlayerByCharacterDetour(int survivorType) {
 		L4D_DEBUG_LOG("GetPlayerByCharacterDetour called for %d", survivorType);
-		
+
 		CBaseEntity* pPlayer = nullptr;
 
 		int maxplayers = playerhelpers->GetMaxClients();
@@ -53,7 +53,7 @@ namespace Detours
 			pPlayer = pCurPlayer;
 			if(skip-- <= 0) {
 				L4D_DEBUG_LOG("GetPlayerByCharacterDetour was found: name=%s", pInfo->GetName());
-				break;	
+				break;
 			}
 		}
 

@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -38,21 +38,21 @@ void ScoreCode::Patch() {
 	g_pGameConf->GetMemSig("CDirector_UpdateMarkersReached", (void **)&m_pDivisor);
 	g_pGameConf->GetMemSig("CL4DGameStats_AddSurvivorStats", (void **)&m_pDivisor2);
 	g_pGameConf->GetMemSig("CTerrorGameRules_GetVersusCompletion", (void**)&m_pDivisor3);
-	
+
 	g_pGameConf->GetOffset("MarkerDivisor", &offset);
 	if(m_pDivisor && offset) {
 		m_pDivisor += offset;
 		SetMemPatchable(m_pDivisor, 1);
 		(*m_pDivisor) = 3;
 	}
-	
+
 	g_pGameConf->GetOffset("StatsDivisor", &offset);
 	if(m_pDivisor2 && offset) {
 		m_pDivisor2 += offset;
 		SetMemPatchable(m_pDivisor2, 1);
 		(*m_pDivisor2) = 3;
 	}
-	
+
 	g_pGameConf->GetOffset("PerPlayerCompletionDivisor", &offset);
 	if(m_pDivisor3 && offset) {
 		m_pDivisor3 += offset;

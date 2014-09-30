@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -37,7 +37,7 @@
 class ScoreCode : public ICodePatch {
 private:
 	char *m_pDivisor, *m_pDivisor2, *m_pDivisor3;
-public:	
+public:
 	ScoreCode() : m_pDivisor(0), m_pDivisor2(0), m_pDivisor3(0) {}
 	~ScoreCode() { Unpatch(); }
 	void Patch();

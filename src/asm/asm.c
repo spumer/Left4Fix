@@ -400,18 +400,18 @@ static bool detour_is_imported(PBYTE pbCode, PBYTE pbAddress)
 			return false;
 		}
 
-		PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)((PBYTE)pDosHeader +
+		PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)((PBYTE)pDosHeader
 														  pDosHeader->e_lfanew);
 		if (pNtHeader->Signature != IMAGE_NT_SIGNATURE) {
 			return false;
 		}
 
-		if (pbAddress >= ((PBYTE)pDosHeader +
+		if (pbAddress >= ((PBYTE)pDosHeader
 						  pNtHeader->OptionalHeader
 						  .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress) &&
-			pbAddress < ((PBYTE)pDosHeader +
+			pbAddress < ((PBYTE)pDosHeader
 						 pNtHeader->OptionalHeader
-						 .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress +
+						 .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress
 						 pNtHeader->OptionalHeader
 						 .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].Size)) {
 			return true;

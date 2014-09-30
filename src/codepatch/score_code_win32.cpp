@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -51,7 +51,7 @@ unsigned char GetVersusCompletion_patch[] = { 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00,
 
 void ScoreCode::Patch() {
 	if(m_isPatched) return;
-	
+
 	g_pGameConf->GetMemSig("DIV_CODE_UpdateMarkersReached", (void **)&m_pMarkers);
 	g_pGameConf->GetMemSig("DIV_CODE_AddSurvivorStats", (void **)&m_pL4DStats);
 	g_pGameConf->GetMemSig("DIV_CODE_GetVersusCompletion", (void**)&m_pCompletion);
@@ -59,24 +59,24 @@ void ScoreCode::Patch() {
 		g_pSM->LogError(myself, "Can't get one of the \"scorecode\" signatures: %x/%x/%x", m_pMarkers, m_pL4DStats, m_pCompletion);
 		return;
 	}
-	
+
 	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
-	
+
 	// prepare the trampoline
 	m_injectMarker = (unsigned char *)sengine->AllocatePageMemory(sizeof(UpdateMarkersReached_patch) + OP_JMP_SIZE);
 	copy_bytes(UpdateMarkersReached_patch, m_injectMarker, sizeof(UpdateMarkersReached_patch));
-	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_JMP_SIZE);	
+	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_JMP_SIZE);
 	// copy original code to our buffer
 	SetMemPatchable(m_pMarkers, sizeof(UpdateMarkersReached_orig));
 	copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig));
 	// inject jmp to trampoline and nop some bytes after target instruction
 	fill_nop(m_pMarkers, sizeof(UpdateMarkersReached_orig));
 	inject_jmp(m_pMarkers, m_injectMarker);
-		
+
 	// prepare the trampoline
 	m_injectStats = (unsigned char *)sengine->AllocatePageMemory(sizeof(AddSurvivorStats_patch) + OP_JMP_SIZE);
 	copy_bytes(AddSurvivorStats_patch, m_injectStats, sizeof(AddSurvivorStats_patch));
-	inject_jmp(m_injectStats + sizeof(AddSurvivorStats_patch), m_pL4DStats + sizeof(AddSurvivorStats_orig));	
+	inject_jmp(m_injectStats + sizeof(AddSurvivorStats_patch), m_pL4DStats + sizeof(AddSurvivorStats_orig));
 	// copy original code to our buffer
 	SetMemPatchable(m_pL4DStats, sizeof(AddSurvivorStats_orig));
 	copy_bytes(m_pL4DStats, AddSurvivorStats_orig, sizeof(AddSurvivorStats_orig));
@@ -94,17 +94,17 @@ void ScoreCode::Patch() {
 	// inject jmp to trampoline
 	inject_jmp(m_pCompletion, m_injectCompl);
 	fill_nop(m_pCompletion + OP_JMP_SIZE, sizeof(GetVersusCompletion_orig) - OP_JMP_SIZE);
-	
+
 	m_isPatched = true;
 }
 
 void ScoreCode::Unpatch() {
 	if(!m_isPatched) return;
-	
+
 	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
 	if(m_injectMarker) { copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig)); sengine->FreePageMemory(m_injectMarker); }
 	if(m_injectStats) { copy_bytes(m_pL4DStats, AddSurvivorStats_orig, sizeof(AddSurvivorStats_orig)); sengine->FreePageMemory(m_injectStats); }
 	if(m_injectCompl) { copy_bytes(m_pCompletion, GetVersusCompletion_orig, sizeof(GetVersusCompletion_orig)); sengine->FreePageMemory(m_injectCompl); }
-	
+
 	m_isPatched = false;
 }

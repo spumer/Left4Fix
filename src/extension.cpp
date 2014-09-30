@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -128,7 +128,7 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	    UTIL_Format(error, maxlength, "Could not read CDirector_AreTeamsFlipped signature");
 		return false;
 	}
-	
+
 	if(!g_pGameConf->GetMemSig("CGameRulesProxy_NotifyNetworkStateChanged", (void **)&Detours::NotifyNetworkStateChanged) || !Detours::NotifyNetworkStateChanged)
 	{
 	    UTIL_Format(error, maxlength, "Could not read CGameRulesProxy_NotifyNetworkStateChanged signature");
@@ -142,12 +142,12 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 	}
 
 	memset(g_dead_players, 0, sizeof(g_dead_players));
-	
+
 	gameevents->AddListener(&g_OnPlayerDeath, "player_death", true);
 	gameevents->AddListener(&g_OnRoundStart,  "round_start",  true);
-		
+
 	Detour::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
-	
+
 	return true;
 }
 
@@ -171,7 +171,7 @@ void Left4Fix::SDK_OnUnload() {
 
 bool Left4Fix::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
 	g_pSmmAPI = ismm;
-	
+
 	GET_V_IFACE_CURRENT(GetEngineFactory, icvar, ICvar, CVAR_INTERFACE_VERSION);
 	GET_V_IFACE_CURRENT(GetEngineFactory, gameevents, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
 	gpGlobals = g_pSmmAPI->GetCGlobals();

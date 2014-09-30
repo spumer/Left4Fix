@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -81,12 +81,12 @@ void Detour::Patch()
 
 void Detour::PatchFromSignature(const char *signatureName, void *targetFunction, unsigned char *&originalFunction, unsigned char *&signature)
 {
-	if (!gameconf->GetMemSig(signatureName, (void**)&signature) || !signature) 
-	{ 
+	if (!gameconf->GetMemSig(signatureName, (void**)&signature) || !signature)
+	{
 		g_pSM->LogError(myself, "Detour -- Could not find '%s' signature", signatureName);
 		return;
-	} 
+	}
 	L4D_DEBUG_LOG("Detour -- beginning patch routine for %s", signatureName);
-	
+
 	PatchFromAddress(targetFunction, originalFunction, signature);
 }

@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -51,7 +51,7 @@ void r_nowDead(const Vector& position, uint32_t score, death_info_t *data) {
 int r_appendScores(uint32_t *pCompl, size_t compl_max_inserts, const death_info_t *begin, size_t data_len) {
 	death_info_t *data = (death_info_t *)begin;
 	int result = 0;
-	for(; compl_max_inserts && 
+	for(; compl_max_inserts &&
 		static_cast<size_t>(data - begin) < data_len; ++data)
 	{
 		if(data->m_Pos.x) {
