@@ -46,6 +46,7 @@
 			"Tiebreak_CheckCodeLen"
 			{
 				"linux"		"104"
+				"windows"	"62"
 			}
 		}
 

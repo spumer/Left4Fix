@@ -36,25 +36,38 @@
 
 
 // for more details see the tiebreak_patch_info.txt
+#ifdef WIN32
+#define BYTES_PART_ONE 5
+#define BYTES_PART_TWO 6
+const uint8_t g_TieBreak_patch[] = {
+    0x89, 0xCB, 0x6A, 0x01, 0x53,
+    0xE8, 0xFF, 0xFF, 0xFF, 0xFF,
+    0x89, 0x45, 0xFC, 0x6A, 0x02, 0x53,
+    0xE8, 0xFF, 0xFF, 0xFF, 0xFF
+};
+#else
+#define BYTES_PART_ONE 13
+#define BYTES_PART_TWO 14
 const uint8_t g_TieBreak_patch[] =  {
 	0x89, 0xC3, 0xC7, 0x44, 0x24, 0x04, 0x01, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
 	0xE8, 0xFF, 0xFF, 0xFF, 0xFF,
 	0x89, 0x45, 0xC4, 0xC7, 0x44, 0x24, 0x04, 0x02, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
 	0xE8, 0xFF, 0xFF, 0xFF, 0xFF
 };
+#endif
 
 typedef struct TiebreakPatch_t {
-	uint8_t bytes[13];
+	uint8_t bytes[BYTES_PART_ONE];
 	uint8_t call_chapter_score_a[OP_CALL_SIZE];
-	uint8_t bytes2[14];
+	uint8_t bytes2[BYTES_PART_TWO];
 	uint8_t call_chapter_score_b[OP_CALL_SIZE];
 } *pTiebreakPatch_t;
 
 
-int GetScoreDetour(void* pGameRules, int team) {
+int __stdcall GetScoreDetour(void* pGameRules, int team) {
 	L4D_DEBUG_LOG("Called GetScoreDetour: this=%x, team=%d", pGameRules, team);
-	static int (*CTerrorGameRules_GetChapterScore)(void* pGameRules, int team);
-	static int (*CTerrorGameRules_GetTeamScore)(void* pGameRules, int team, bool campaign);
+	static int (__thiscall *CTerrorGameRules_GetChapterScore)(void* pGameRules, int team);
+	static int (__thiscall *CTerrorGameRules_GetTeamScore)(void* pGameRules, int team, bool campaign);
 
 	if( !CTerrorGameRules_GetChapterScore ) {
 		if( !g_pGameConf->GetMemSig("CTerrorGameRules_GetChapterScore", (void**)&CTerrorGameRules_GetChapterScore) || !CTerrorGameRules_GetChapterScore ) {
