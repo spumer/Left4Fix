@@ -39,17 +39,20 @@ void WarpMaxPlayers::Patch() {
 
 	int offset;
 
-	g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&m_pMaxPlayerCount);
+	g_pGameConf->GetMemSig("CTerrorPlayer_WarpGhostToInitialPosition", (void **)&m_pMaxPlayerCount);
 	if( !m_pMaxPlayerCount ) {
-		g_pSM->LogError(myself, "Can't get the \"WarpMaxPlayers\" signature: %x", m_pMaxPlayerCount);
+		g_pSM->LogError(myself, "Can't get the \"CTerrorPlayer_WarpGhostToInitialPosition\" signature: %x", m_pMaxPlayerCount);
 		return;
 	}
 
-	if(g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset)) {
-		m_pMaxPlayerCount += offset;
+	if( !g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset) || !offset ) {
+		g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_MaxPlayerCount' offset");
+		return;
 	}
+	m_pMaxPlayerCount += offset;
 
 	SetMemPatchable(m_pMaxPlayerCount, 1);
+	assert(*m_pMaxPlayerCount == 3);
 	*m_pMaxPlayerCount = static_cast<uint8_t>(TEAM_SIZE - 1);
 
 	m_isPatched = true;
@@ -58,7 +61,7 @@ void WarpMaxPlayers::Patch() {
 void WarpMaxPlayers::Unpatch() {
 	if(!m_isPatched) return;
 
-	if(m_pMaxPlayerCount) { *m_pMaxPlayerCount = 4; }
+	if(m_pMaxPlayerCount) { *m_pMaxPlayerCount = 3; }
 
 	m_isPatched = false;
 }

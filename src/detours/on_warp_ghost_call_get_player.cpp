@@ -30,7 +30,11 @@
  */
 
 #include "extension.h"
+
+#include "asm/asm.h"
+#include "CDetour/detourhelpers.h"
 #include "on_warp_ghost_call_get_player.h"
+
 
 namespace Detours
 {
@@ -68,15 +72,47 @@ namespace Detours
 		int offset;
 		unsigned char* pGetPlayerCall;
 
-		g_pGameConf->GetMemSig("WarpGhost_GetPlayerByCharacter", (void **)&pGetPlayerCall);
+		g_pGameConf->GetMemSig("CTerrorPlayer_WarpGhostToInitialPosition", (void **)&pGetPlayerCall);
 		if( !pGetPlayerCall ) {
-			g_pSM->LogError(myself, "Can't get the \"WarpCode\" signature: %x", pGetPlayerCall);
+			g_pSM->LogError(myself, "Can't get the \"CTerrorPlayer_WarpGhostToInitialPosition\" signature: %x", pGetPlayerCall);
 			return nullptr;
 		}
 
-		if(g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter", &offset)) {
-			pGetPlayerCall += offset;
+		if( !g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter", &offset) || !offset ) {
+			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_GetPlayerByCharacter' offset");
+			return nullptr;
 		}
+		pGetPlayerCall += offset;
+
+#ifdef WIN32
+		// Windows version inline function body
+		// NOP code and insert call instruction instead
+		int need_nop;
+		void *addr;
+		uint8_t push_arg[] = { 0x50 };  // push eax
+		uint8_t cleanup_stack[] = { 0x83, 0xC4, 0x04 };  // add esp, 4
+
+		if( !g_pGameConf->GetMemSig("CTerrorPlayer_GetPlayerByCharacter", (void **)&addr) || !addr ) {
+			g_pSM->LogError(myself, "WarpGhost -- Could not find 'CTerrorPlayer_GetPlayerByCharacter' address");
+			return nullptr;
+		}
+
+		if( !g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter_inline_len", &need_nop) || !need_nop ) {
+			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_GetPlayerByCharacter_inline_len' offset");
+			return nullptr;
+		}
+		assert(static_cast<size_t>(need_nop) >= sizeof(sizeof(push_arg) + OP_CALL_SIZE + sizeof(cleanup_stack)));
+
+		SetMemPatchable(pGetPlayerCall, need_nop);
+		fill_nop(pGetPlayerCall, need_nop);
+
+		copy_bytes(push_arg, pGetPlayerCall, sizeof(push_arg));
+		pGetPlayerCall += sizeof(push_arg);
+
+		pGetPlayerCall[0] = OP_CALL;
+		replace_call_addr(pGetPlayerCall, addr);
+		copy_bytes(cleanup_stack, &pGetPlayerCall[OP_CALL_SIZE], sizeof(cleanup_stack));
+#endif
 
 		return pGetPlayerCall;
 	}
