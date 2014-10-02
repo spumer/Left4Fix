@@ -41,7 +41,7 @@
 
 			"WarpGhost_MaxPlayerCount"
 			{
-				"linux"		"1290"
+				"linux"		"1285"
 				"windows"	"285"
 			}
 
