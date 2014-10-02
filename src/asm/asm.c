@@ -387,39 +387,3 @@ void* eval_jump(void* src) {
 void replace_call_addr(void* src, void* dest) {
 	*(long*)((unsigned char*)src+1) = (long)((unsigned char*)dest - ((unsigned char*)src + OP_CALL_SIZE));
 }
-
-/*
-from ms detours package
-static bool detour_is_imported(PBYTE pbCode, PBYTE pbAddress)
-{
-	MEMORY_BASIC_INFORMATION mbi;
-	VirtualQuery((PVOID)pbCode, &mbi, sizeof(mbi));
-	__try {
-		PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)mbi.AllocationBase;
-		if (pDosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
-			return false;
-		}
-
-		PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)((PBYTE)pDosHeader
-														  pDosHeader->e_lfanew);
-		if (pNtHeader->Signature != IMAGE_NT_SIGNATURE) {
-			return false;
-		}
-
-		if (pbAddress >= ((PBYTE)pDosHeader
-						  pNtHeader->OptionalHeader
-						  .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress) &&
-			pbAddress < ((PBYTE)pDosHeader
-						 pNtHeader->OptionalHeader
-						 .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress
-						 pNtHeader->OptionalHeader
-						 .DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].Size)) {
-			return true;
-		}
-		return false;
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER) {
-		return false;
-	}
-}
-*/
