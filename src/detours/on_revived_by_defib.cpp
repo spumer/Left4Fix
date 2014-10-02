@@ -44,7 +44,7 @@ namespace Detours
 		if(pGamePlayer) {
 			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
 			if(pInfo) {
-				r_nowAlive(pInfo->GetAbsOrigin(), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+				r_nowAlive(pInfo->GetAbsOrigin(), g_dead_players, arraysize(g_dead_players));
 				L4D_DEBUG_LOG("RevivedByDefib called for: %s", pInfo->GetName());
 			}
 		}

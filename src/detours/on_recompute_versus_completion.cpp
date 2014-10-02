@@ -148,7 +148,7 @@ namespace Detours
 			}
 		}
 
-		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, sizeof(g_dead_players)/sizeof(g_dead_players[0]));
+		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, arraysize(g_dead_players));
 
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 #ifdef WIN32
