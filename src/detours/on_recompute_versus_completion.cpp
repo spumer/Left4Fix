@@ -111,7 +111,7 @@ namespace Detours
 		IPlayerInfo *pInfo;
 		IGamePlayer *pGamePlayer;
 
-		uint32_t *pCompl = g_iHighestVersusSurvivorCompletion;
+		uint32_t *pNextScore = g_iHighestVersusSurvivorCompletion;
 		for(int client = 1, survivors = 0; client <= 32; ++client) {
 			pPlayer = gamehelpers->ReferenceToEntity(client);
 			if(!pPlayer) continue;
@@ -124,7 +124,6 @@ namespace Detours
 
 			if(pInfo->GetTeamIndex() == 2) {
 				if(pInfo->IsObserver()) continue;
-				++survivors;
 
 				// Save actual score for player
 				g_scores[client] = GetVersusCompletionFunc(pGameRules, pPlayer);
@@ -136,19 +135,19 @@ namespace Detours
 				// Only after this real player will be placed to requested team
 				// When changing team in progress the both players (bot and human) has a 0 points
 				if(g_scores[client] != 0) {
-					// Break loop when g_iHighestVersusSurvivorCompletion buffer can't take next value
-					if(survivors > TEAM_SIZE) {
-						g_pSM->LogError(myself, "Attention! TEAM_SIZE limit is exceeded. Check code which create additional survivors.");
+					if(++survivors > TEAM_SIZE) {
+						// Break loop when g_iHighestVersusSurvivorCompletion buffer can't take next value
+						g_pSM->LogError(myself, "Attention! TEAM_SIZE limit is exceeded. Extension don't support more than %d players", TEAM_SIZE);
 						break;
 					}
 
-					*pCompl = g_scores[client];
-					result += *pCompl++;
+					*pNextScore = g_scores[client];
+					result += *pNextScore++;
 				}
 			}
 		}
 
-		result += r_appendScores(pCompl, TEAM_SIZE - (pCompl - g_iHighestVersusSurvivorCompletion), g_dead_players, arraysize(g_dead_players));
+		result += r_appendScores(pNextScore, TEAM_SIZE - (pNextScore - g_iHighestVersusSurvivorCompletion), g_dead_players, arraysize(g_dead_players));
 
 		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
 #ifdef WIN32
