@@ -101,7 +101,7 @@ namespace Detours
 			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_GetPlayerByCharacter_inline_len' offset");
 			return nullptr;
 		}
-		assert(static_cast<size_t>(need_nop) >= sizeof(sizeof(push_arg) + OP_CALL_SIZE + sizeof(cleanup_stack)));
+		assert(static_cast<size_t>(need_nop) >= sizeof(push_arg) + OP_CALL_SIZE + sizeof(cleanup_stack));
 
 		SetMemPatchable(pGetPlayerCall, need_nop);
 		fill_nop(pGetPlayerCall, need_nop);
