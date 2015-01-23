@@ -63,8 +63,11 @@ typedef struct TiebreakPatch_t {
 	uint8_t call_chapter_score_b[OP_CALL_SIZE];
 } *pTiebreakPatch_t;
 
-
+#ifdef WIN32
 int __stdcall GetScoreDetour(void* pGameRules, int team) {
+#else
+int GetScoreDetour(void* pGameRules, int team) {
+#endif
 	L4D_DEBUG_LOG("Called GetScoreDetour: this=%x, team=%d", pGameRules, team);
 	static int (__thiscall *CTerrorGameRules_GetChapterScore)(void* pGameRules, int team);
 	static int (__thiscall *CTerrorGameRules_GetTeamScore)(void* pGameRules, int team, bool campaign);
