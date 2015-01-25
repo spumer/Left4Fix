@@ -117,8 +117,10 @@ void Tiebreak::Patch() {
 
 	SetMemPatchable(m_regionAddr, need_nop);
 
-	m_regionData = new uint8_t[need_nop];
+	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
+
 	m_regionLen = need_nop;
+	m_regionData = (uint8_t *)sengine->AllocatePageMemory(m_regionLen);
 	copy_bytes(/*src*/(unsigned char *)m_regionAddr, /*dst*/m_regionData, m_regionLen);
 
 	fill_nop(m_regionAddr, need_nop);
@@ -136,8 +138,9 @@ void Tiebreak::Unpatch() {
 	if(!m_isPatched) return;
 
 	if(m_regionData) {
+		ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
 		copy_bytes(m_regionData, m_regionAddr, m_regionLen);
-		delete[] m_regionData;
+		sengine->FreePageMemory(m_regionData);
 	}
 
 	m_isPatched = false;
