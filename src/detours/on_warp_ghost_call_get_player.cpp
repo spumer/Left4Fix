@@ -52,13 +52,16 @@ namespace Detours
 			if(!pGamePlayer || !pGamePlayer->IsConnected()) continue;
 
 			IPlayerInfo* pInfo = pGamePlayer->GetPlayerInfo();
-			if(!pInfo || pInfo->GetTeamIndex() != 2 || pInfo->IsObserver()) continue;
+			if(!pInfo || pInfo->GetTeamIndex() != 2) continue;
+
+			if(skip > 0) { skip -= 1; continue; }
+
+			if(pInfo->IsObserver()) continue;
 
 			pPlayer = pCurPlayer;
-			if(skip-- <= 0) {
-				L4D_DEBUG_LOG("GetPlayerByCharacterDetour was found: name=%s", pInfo->GetName());
-				break;
-			}
+
+			L4D_DEBUG_LOG("GetPlayerByCharacterDetour was found: name=%s", pInfo->GetName());
+			break;
 		}
 
 		if(!pPlayer) {
