@@ -85,7 +85,9 @@ void ScoreCode::Patch() {
 	fill_nop(m_pL4DStats + OP_JMP_SIZE, sizeof(AddSurvivorStats_orig) - OP_JMP_SIZE);
 
 	// prepare the trampoline
-	m_injectCompl = (unsigned char *)sengine->AllocatePageMemory(sizeof(GetVersusCompletion_patch) + OP_JMP_SIZE);
+	// patch size: (division code size) + (original MOV (A1) to EAX) + (original short MOV (89)) + (JMP back)
+	size_t compl_patch_size = sizeof(GetVersusCompletion_patch) + OP_MOV_SIZE + 3 + OP_JMP_SIZE;
+	m_injectCompl = (unsigned char *)sengine->AllocatePageMemory(compl_patch_size);
 	unsigned char *pInjectEnd = m_injectCompl;
 	copy_bytes(GetVersusCompletion_patch, m_injectCompl, sizeof(GetVersusCompletion_patch)); pInjectEnd += sizeof(GetVersusCompletion_patch);
 	copy_bytes(m_pCompletion + 3, pInjectEnd, OP_MOV_SIZE); pInjectEnd += OP_MOV_SIZE;
