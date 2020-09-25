@@ -5,10 +5,12 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK ?= ../../_SDK_PLATFORM/sourcemod
-SRCDS_BASE ?= ../../_SDK_PLATFORM/srcds
-HL2SDK_L4D2 ?= ../../_SDK_PLATFORM/hl2sdk-l4d2
-MMSOURCE ?= ../../_SDK_PLATFORM/mmsource
+SDK_PLATFORM ?= ../../../_SDK_PLATFORM
+
+SMSDK = $(SDK_PLATFORM)/sourcemod
+SRCDS_BASE ?= $(SDK_PLATFORM)/srcds
+HL2SDK_L4D2 ?= $(SDK_PLATFORM)/hl2sdk-l4d2
+MMSOURCE ?= $(SDK_PLATFORM)/mmsource
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -40,7 +42,7 @@ C_OPT_FLAGS = -DNDEBUG -Ofast -flto -funroll-loops -pipe -fno-strict-aliasing -f
 C_DEBUG_FLAGS = -D_DEBUG -DDEBUG -g -ggdb3
 C_GCC4_FLAGS = -fvisibility=hidden
 CPP_GCC4_FLAGS = -fvisibility-inlines-hidden -std=c++11
-CPP = gcc
+CPP = gcc-4.8
 
 ##########################
 ### SDK CONFIGURATIONS ###
@@ -96,7 +98,9 @@ endif
 BINARY = $(PROJECT).ext.$(LIB_EXT)
 
 GCC_VERSION := $(shell $(CPP) -dumpversion >&1 | cut -b1)
-ifeq "$(GCC_VERSION)" "4"
+
+# apply flags for GCC 4, 5 and 6 versions
+ifneq (,$(filter $(GCC_VERSION),4 5 6))
 	CFLAGS += $(C_GCC4_FLAGS)
 	CPPFLAGS += $(CPP_GCC4_FLAGS)
 endif
