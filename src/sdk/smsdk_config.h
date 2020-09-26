@@ -43,7 +43,7 @@
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"Left4Fix"
 #define SMEXT_CONF_DESCRIPTION	"Fix score completion on servers have 8+ players"
-#define SMEXT_CONF_VERSION		QUOTE(2.0.2 (TEAM_SIZE players))
+#define SMEXT_CONF_VERSION		QUOTE(2.0.3 (TEAM_SIZE players))
 #define SMEXT_CONF_AUTHOR		"spumer"
 #define SMEXT_CONF_URL			"https://forums.alliedmods.net/member.php?u=151387"
 #define SMEXT_CONF_LOGTAG		"L4FIX"

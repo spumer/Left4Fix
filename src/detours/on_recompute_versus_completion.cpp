@@ -41,46 +41,46 @@
 
 /*
 typedef struct {
-	uint8_t unknownData[888];					// 0 bytes
-	uint32_t versus_score_bonus[2];				// 888 bytes	// temp buffer to store chapter score for second team
-	uint32_t versus_campaign_score[2];			// 896 bytes
-	uint32_t chapter_score[2];					// 904 bytes	// full filled only after EndVersusRoundEnd
-	uint8_t unknownData1[72];					// 912 bytes
-	uint32_t survivors_completion_score[2][4];	// 976 bytes
-	uint32_t survivors_death_score[2][4];		// 1008 bytes
-	uint8_t survivors_escaped[4];				// 1040 bytes	// in-game buffer
-	uint32_t versus_completion_score;			// 1044 bytes	// in-game buffer
-	uint32_t versus_survival_multiplier[2];		// 1048 bytes	// user count who survived
-	uint8_t unknownData2[92];			      	// 1056 bytes
-	uint8_t areTeamsFlipped						// 1148 bytes
-	uint8_t roundFirstHalf						// 1149 bytes
-	uint8_t isTransitionToNextMap;		      	// 1150 bytes
-	uint8_t unknownData3[5];				    // 1151 bytes
-	uint32_t sacrafice_escaped_mask;			// 1156 bytes	// e.g. 1000 0110 0000 0001 1000 0110 0000 0001 where bit position is a client index
+	uint8_t unknownData[908];					// 0 bytes
+	uint32_t versus_score_bonus[2];				// 908 bytes	// temp buffer to store chapter score for second team
+	uint32_t versus_campaign_score[2];			// 916 bytes
+	uint32_t chapter_score[2];					// 924 bytes	// full filled only after EndVersusRoundEnd
+	uint8_t unknownData1[72];					// 932 bytes
+	uint32_t survivors_completion_score[2][4];	// 996 bytes
+	uint32_t survivors_death_score[2][4];		// 1028 bytes
+	uint8_t survivors_escaped[4];				// 1060 bytes	// in-game buffer
+	uint32_t versus_completion_score;			// 1064 bytes	// in-game buffer
+	uint32_t versus_survival_multiplier[2];		// 1068 bytes	// user count who survived
+	uint8_t unknownData2[92];			      	// 1076 bytes
+	uint8_t areTeamsFlipped						// 1168 bytes
+	uint8_t roundFirstHalf						// 1169 bytes
+	uint8_t isTransitionToNextMap;		      	// 1170 bytes
+	uint8_t unknownData3[5];				    // 1171 bytes
+	uint32_t sacrafice_escaped_mask;			// 1176 bytes	// e.g. 1000 0110 0000 0001 1000 0110 0000 0001 where bit position is a client index
 } CTerrorGameRules_t;
 */
 
 namespace Detours
 {
-#ifdef WIN32
 	int cmp_uint_desc(const void* p1, const void* p2) {
 		return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
 	}
-#endif
 
 	int __thiscall RecomputeVersusCompletion::OnRecompute(bool arg) {
-		int i;
-		bool team = AreTeamsFlipped(*g_pDirector);
+		int newTotalResult = myRecompute(this);
+		if(newTotalResult <= g_totalResult) {
+			return g_totalResult;
+		}
 
-		i = myRecompute(this);
-		if(i > g_totalResult) g_totalResult = i;
+		g_totalResult = newTotalResult;
 
 		uint32_t (*piVersusSurvivorCompletion)[4] = reinterpret_cast<uint32_t(*)[4]>((unsigned char *)(this) + g_versusSurvivorCompletionOffset);
 
 		/**
 		* Fix score shows by pressing TAB
 		*/
-		NotifyNetworkStateChanged();
+
+		bool team = AreTeamsFlipped(*g_pDirector);
 
 		piVersusSurvivorCompletion[team][0] =
 			piVersusSurvivorCompletion[team][1] =
@@ -88,6 +88,8 @@ namespace Detours
 					piVersusSurvivorCompletion[team][3] = g_totalResult / 4;
 
 		piVersusSurvivorCompletion[team][0] += g_totalResult % 4;
+
+		NotifyNetworkStateChanged();
 
 		L4D_DEBUG_LOG("Recompute return: %d.", g_totalResult);
 
@@ -149,15 +151,7 @@ namespace Detours
 
 		result += r_appendScores(pNextScore, TEAM_SIZE - (pNextScore - g_iHighestVersusSurvivorCompletion), g_dead_players, arraysize(g_dead_players));
 
-		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t),
-#ifdef WIN32
-			cmp_uint_desc
-#else
-			[] (const void* p1, const void* p2) {
-				 return static_cast<int>(*(uint32_t*)p2 - *(uint32_t*)p1);
-			  }
-#endif
-		);
+		qsort(g_iHighestVersusSurvivorCompletion, TEAM_SIZE, sizeof(uint32_t), cmp_uint_desc);
 		return result;
 	}
 }
