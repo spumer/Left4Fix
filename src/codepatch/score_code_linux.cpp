@@ -29,11 +29,10 @@
  * Version: $Id$
  */
 
+#include <asm/asm.h>
 #include "score_code_basic.h"
 #include "extension.h"
-#include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
-#include "codepatch/patch_utils.hpp"
 
 #define OP_MOV 0xA1
 #define OP_MOV_SIZE 5

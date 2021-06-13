@@ -31,7 +31,6 @@
 
 #include "extension.h"
 
-#include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
 #include "on_warp_ghost_call_get_player.h"
 

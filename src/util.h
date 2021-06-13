@@ -29,8 +29,26 @@
  * Version: $Id$
  */
 
-#ifndef _INCLUDE_L4DOWNTOWN_TOOLS_UTIL_H_
-#define _INCLUDE_L4DOWNTOWN_TOOLS_UTIL_H_
+#ifndef _INCLUDE_UTIL_H_
+#define _INCLUDE_UTIL_H_
+
+
+
+#define OP_JMP				0xE9
+#define OP_JMP_SIZE			5
+
+#define OP_NOP				0x90
+#define OP_NOP_SIZE			1
+
+#define OP_PREFIX			0xFF
+#define OP_JMP_SEG			0x25
+
+#define OP_JMP_BYTE			0xEB
+#define OP_JMP_BYTE_SIZE	2
+
+#define OP_CALL				0xE8
+#define OP_CALL_SIZE		5
+
 
 #define REGISTER_NATIVE_ADDR(name, code) \
 	void *addr; \
@@ -42,5 +60,10 @@
 
 
 size_t UTIL_Format(char *buffer, size_t maxlength, const char *fmt, ...);
+void memDump(uint8_t *pAddr, size_t len);
+
+// replace address in specific CALL instruction to the given function address
+void replace_call_addr(void* src, void* dest);
+
 
 #endif //_INCLUDE_L4DOWNTOWN_TOOLS_UTIL_H_

@@ -43,7 +43,7 @@
 #define L4D_DEBUG_LOG(...)
 #endif
 
-#include "smsdk_ext.h"
+#include "sdk/smsdk_ext.h"
 #include "util.h"
 #include <iplayerinfo.h>
 #include <vector.h> // for Vector class
