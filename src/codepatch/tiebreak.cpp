@@ -35,7 +35,7 @@
 #include "CDetour/detourhelpers.h"
 
 
-// for more details see the tiebreak_patch_info.txt
+// for more details see the patchinfo/tiebreak.txt
 #ifdef WIN32
 #define BYTES_PART_ONE 5
 #define BYTES_PART_TWO 6
