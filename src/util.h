@@ -58,7 +58,7 @@
 	} \
 	code;
 
-
+size_t UTIL_DecodeHexString(unsigned char *buffer, size_t maxlength, const char *hexstr);
 size_t UTIL_Format(char *buffer, size_t maxlength, const char *fmt, ...);
 void memDump(uint8_t *pAddr, size_t len);
 

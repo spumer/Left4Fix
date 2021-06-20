@@ -45,7 +45,7 @@ void WarpMaxPlayers::Patch() {
 		return;
 	}
 
-	if( !g_pGameConf->GetOffset("WarpGhost_MaxPlayerCount", &offset) || !offset ) {
+	if( !g_pGameConf->GetOffset("WarpGhostToInitialPosition__MaxPlayerCount", &offset) || !offset ) {
 		g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_MaxPlayerCount' offset");
 		return;
 	}

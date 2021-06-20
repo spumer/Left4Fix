@@ -1,44 +1,47 @@
 
-UpdateMarkersReached: 89 04 24 E8 ? ? ? ? F3 0F 2A 45 E4 C1 F8 02 (EAX, EDX)
+UpdateMarkersReached: 89 04 24 E8 ? ? ? ? F3 0F 2A C6 8B 53 4C C1 F8 02 (EAX, EDX, ECX)
 AddSurvivorStats: 89 04 24 E8 ? ? ? ? C1 F8 02(EAX, ECX, EDX)
-GetVersusCompletion: B8 00 00 00 00 C1 FB 02 85 DB 0F 48 D8 (EAX, EDX, EBX)
+GetVersusCompletion: B8 00 00 00 00 C1 FE 02 85 F6 0F 48 F0 (EAX, EDX, ESI)
 
 
 UpdateMarkersReached_patch:
 
-E9 ? ? ? ?			/* JMP [address] */
+E9 ? ? ? ?       /* JMP [address] */
+---
 8B 80 FC 0D 00 00   /* mov eax, [eax+3580] */
-31 D2				/* xor edx, edx */
-BB 0A 00 00 00		/* mov ebx, 10 */
-F7 F3				/* div ebx */
-F3 0F 2A 45 E4		/* Preserve xmm0 value for original funcion: cvtsi2ss xmm0, [ebp-0x1c] */
-E9 ? ? ? ?			/* JMP [address] ;jump to next instruction */
-					/* NOP 3 bytes (sar eax, 2) */
+31 D2           /* xor edx, edx */
+B9 0A 00 00 00    /* mov ecx, 10 */
+F7 F1           /* div ecx */
+F3 0F 2A C6       /* Preserve xmm0 value for original function: cvtsi2ss xmm0, esi */
+8B 53 4C   /* Preserve edx value for original function: mov edx, [ebx+76] */
+---
+E9 ? ? ? ?       /* JMP [address] ;jump back to next instruction */
+               /* NOP 3 bytes (sar eax, 2) */
 
 Result:
-{ 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0xBA, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF2, 0xF3, 0x0F, 0x2A, 0x45, 0xE4 }
+{ 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0xF3, 0x0F, 0x2A, 0xC6, 0x8B, 0x53, 0x4C }
 
 AddSurvivorStats_patch:
-8b 80 fc 0d 00 00			/* mov eax, [eax+3580] */
-31 D2						/* xor edx, edx */
-b9 0a 00 00 00				/* mov ecx, 10 */
-F7 F1						/* div ecx */
-85 C0 						/* test eax, eax */
-89 45 AC 					/* mov [ebp+var_54], eax
+8b 80 fc 0d 00 00        /* mov eax, [eax+3580] */
+31 D2                 /* xor edx, edx */
+b9 0a 00 00 00          /* mov ecx, 10 */
+F7 F1                 /* div ecx */
+85 C0                 /* test eax, eax */
+89 45 B0               /* mov [ebp+var_50], eax
 /* our patch smaller than original, nop other */
-90 90 90 90 90 90 90		/* nop(s) */
+90 90 90 90 90 90 90     /* nop(s) */
 
 Result:
-{ 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0xB9, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0x85, 0xC0, 0x89, 0x45, 0xAC, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }
+{ 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0x85, 0xC0, 0x89, 0x45, 0xB0, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }
 
 GetVersusCompletion_patch:
 
-89 d8			/* mov eax,ebx */
-31 D2			/* xor edx, edx */
-bb 0a 00 00 00	/* mov ebx, 10 */
-f7 f3			/* div ebx */
-89 c3			/* mov ebx, eax */
+89 f0        /* mov eax,esi */
+31 D2        /* xor edx, edx */
+be 0a 00 00 00 /* mov esi, 10 */
+f7 f6        /* div esi */
+89 c6        /* mov esi, eax */
 
 Result:
-{ 0x89, 0xD8, 0xBB, 0x0A, 0x00, 0x00, 0x00, 0xF7, 0xF3, 0x89, 0xC3, 0x90, 0x90 }
+{ 0x89, 0xF0, 0x31, 0xD2, 0xBE, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF6, 0x89, 0xC6 }
 

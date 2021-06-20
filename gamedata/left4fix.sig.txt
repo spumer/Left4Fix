@@ -2,6 +2,14 @@
 {
 	"left4dead2"
 	{
+
+		// <key>_patt will be verified and replaced by <key>_replace if it present
+		// <key>_nop can be used instead to replace <key>_patt by NOP opcodes
+		"Keys"
+		{
+			"UpdateMarkersReached_patt" "\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xF3\x0F\x2A\xC6\x8B\x53\x4C\xC1\xF8\x02"
+			"UpdateMarkersReached_nop"   "1"
+		}
 		"Offsets"
 		{
 			"VersusCompletionScore"
@@ -10,42 +18,24 @@
 				"windows"	"1000"
 			}
 
-			"MarkerDivisor"
-			{
-				"linux"		"112"
-				"windows"	"133"
-			}
-
-			"StatsDivisor"
-			{
-				"linux"		"409"
-				"windows"	"297"
-			}
-
-			"PerPlayerCompletionDivisor"
-			{
-				"linux"		"75"
-				"windows"	"47"
-			}
-
 			"TheDirector"
 			{
 				"windows"	"12"
 			}
 
-			"WarpGhost_GetPlayerByCharacter"
+			"WarpGhostToInitialPosition__GetPlayerByCharacter"
 			{
-				"linux"		"1309"
-				"windows"	"304"
+				"linux"		"265"
+				//"windows"	"304"
 			}
 
-			"WarpGhost_MaxPlayerCount"
+			"WarpGhostToInitialPosition__MaxPlayerCount"
 			{
-				"linux"		"1285"
-				"windows"	"285"
+				"linux"		"310"
+				//"windows"	"285"
 			}
 
-			"WarpGhost_GetPlayerByCharacter_inline_len"
+			"WarpGhostToInitialPosition__GetPlayerByCharacter_inline_len"
 			{
 				"windows"	"40"
 			}
@@ -53,7 +43,7 @@
 			"Tiebreak_CheckCodeLen"
 			{
 				"linux"		"104"
-				"windows"	"62"
+				//"windows"	"62"
 			}
 		}
 
@@ -145,22 +135,6 @@
 				"windows"	"\x57\x8b\xf9\xe8****\x84\xc0\x75*\xf7\x05*******\x00\x56\x74*\xbe"
 			}
 
-			"CDirector_UpdateMarkersReached"
-			{
-				"library"	"server"
-				"linux"		"@_ZN19CDirectorVersusMode20UpdateMarkersReachedEv"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x8B\x41\x2A\x89\x2A\x2A\x39\x41\x2A\x0F\x8D"
-				/* 55 8B EC 83 EC ? 8B 41 ? 89 ? ? 39 41 ? 0F 8D */
-			}
-
-			"CL4DGameStats_AddSurvivorStats"
-			{
-				"library"	"server"
-				"linux"		"@_ZN13CL4DGameStats16AddSurvivorStatsEb"
-				"windows"	"\x55\x8B\xEC\x83\xEC\x2A\x0F\xB6\x45\x2A\x53\x56\x33\xF6\xF7\xD8"
-				/* 55 8B EC 83 EC ? 0F B6 45 ? 53 56 33 F6 F7 D8 */
-			}
-
 			// CTerrorGameRules::GetChapterScore(int)
 			// Multiple matches, but we need first
 			"CTerrorGameRules_GetChapterScore"
@@ -183,14 +157,14 @@
 			"CHECK_CODE_Tiebreak"
 			{
 				"library"	"server"
-				"linux"		"\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC7\xA1"
-				"windows"	"\x6A\x02\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x6A\x03\x8B\xF0"
+				"linux"		"\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC6\xA1"
+				//"windows"	"\x6A\x02\xE8\x2A\x2A\x2A\x2A\x8B\x2A\x2A\x2A\x2A\x2A\x6A\x03\x8B\xF0"
 			}
 
-			"DIV_CODE_UpdateMarkersReached"
+			"UpdateMarkersReached_search"
 			{
 				"library"	"server"
-				"linux"		"\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xF3\x0F\x2A\x45\xE4\xC1\xF8\x02"
+				"linux"		"\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xF3\x0F\x2A\xC6\x8B\x53\x4C\xC1\xF8\x02"
 				//"windows"	"\xF3\x0F\x10\x45\xFC\xC1\xF8\x02"
 			}
 
@@ -204,7 +178,7 @@
 			"DIV_CODE_GetVersusCompletion"
 			{
 				"library"	"server"
-				"linux"		"\xB8\x00\x00\x00\x00\xC1\xFB\x02\x85\xDB\x0F\x48\xD8"
+				"linux"		"\xB8\x00\x00\x00\x00\xC1\xFE\x02\x85\xF6\x0F\x48\xF0"
 				//"windows"	"\x33\xC9\xC1\xF8\x02"
 			}
 		}

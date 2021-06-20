@@ -45,8 +45,6 @@
 #include "event_player_death.hpp"
 #include "event_round_start.hpp"
 
-#define GAMECONFIG_FILE "left4fix.sig"
-
 /**
  * @file extension.cpp
  * @brief Implement extension code here.
@@ -74,7 +72,7 @@ namespace Detours {
 /* Interfaces */
 IGameConfig *g_pGameConf = NULL;
 ISmmAPI *g_pSmmAPI = NULL;
-ICvar *icvar = NULL;
+ICvar *g_pCVar = NULL;
 IGameEventManager2 *gameevents = NULL;
 
 SMEXT_LINK(&g_Left4Fix);
@@ -172,7 +170,7 @@ void Left4Fix::SDK_OnUnload() {
 bool Left4Fix::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
 	g_pSmmAPI = ismm;
 
-	GET_V_IFACE_CURRENT(GetEngineFactory, icvar, ICvar, CVAR_INTERFACE_VERSION);
+	GET_V_IFACE_CURRENT(GetEngineFactory, g_pCVar, ICvar, CVAR_INTERFACE_VERSION);
 	GET_V_IFACE_CURRENT(GetEngineFactory, gameevents, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
 	gpGlobals = g_pSmmAPI->GetCGlobals();
 	return true;

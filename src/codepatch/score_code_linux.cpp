@@ -37,22 +37,20 @@
 #define OP_MOV 0xA1
 #define OP_MOV_SIZE 5
 
-// TODO: Create CUT/PASTE masks functions for wrap instructions inside my patch
+unsigned char UpdateMarkersReached_patch[] = { 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0xF3, 0x0F, 0x2A, 0xC6, 0x8B, 0x53, 0x4C };
+unsigned char UpdateMarkersReached_orig[sizeof(UpdateMarkersReached_patch)];
 
-unsigned char UpdateMarkersReached_orig[]  = { 0x89, 0x04, 0x24, 0xE8, 0x07, 0x9E, 0xC6, 0xFF, 0xF3, 0x0F, 0x2A, 0x45, 0xE4, 0xC1, 0xF8, 0x02 };
-unsigned char UpdateMarkersReached_patch[] = { 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xBB, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF3, 0xF3, 0x0F, 0x2A, 0x45, 0xE4 };
+unsigned char AddSurvivorStats_patch[] = { 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0x85, 0xC0, 0x89, 0x45, 0xB0, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+unsigned char AddSurvivorStats_orig[sizeof(AddSurvivorStats_patch)];
 
-unsigned char AddSurvivorStats_orig[]  = { 0x89, 0x04, 0x24, 0xE8, 0x89, 0xCB, 0xC4, 0xFF, 0xC1, 0xF8, 0x02, 0xF3, 0x0F, 0x2A, 0xC0, 0x0F, 0x2F, 0x05, 0x90, 0x95, 0xBA, 0x00, 0xF3, 0x0F, 0x11, 0x45, 0xAC };
-unsigned char AddSurvivorStats_patch[] = { 0x8B, 0x80, 0xFC, 0x0D, 0x00, 0x00, 0x31, 0xD2, 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF1, 0x85, 0xC0, 0x89, 0x45, 0xAC, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-
-unsigned char GetVersusCompletion_orig[]  = { 0xB8, 0x00, 0x00, 0x00, 0x00, 0xC1, 0xFB, 0x02, 0x85, 0xDB, 0x0F, 0x48, 0xD8 };
-unsigned char GetVersusCompletion_patch[] = { 0x89, 0xD8, 0x31, 0xD2, 0xBB, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF3, 0x89, 0xC3 };
+unsigned char GetVersusCompletion_patch[] = { 0x89, 0xF0, 0x31, 0xD2, 0xBE, TEAM_SIZE, 0x00, 0x00, 0x00, 0xF7, 0xF6, 0x89, 0xC6 };
+unsigned char GetVersusCompletion_orig[sizeof(GetVersusCompletion_patch)];
 
 
 void ScoreCode::Patch() {
 	if(m_isPatched) return;
 
-	g_pGameConf->GetMemSig("DIV_CODE_UpdateMarkersReached", (void **)&m_pMarkers);
+	g_pGameConf->GetMemSig("UpdateMarkersReached_search", (void **)&m_pMarkers);
 	g_pGameConf->GetMemSig("DIV_CODE_AddSurvivorStats", (void **)&m_pL4DStats);
 	g_pGameConf->GetMemSig("DIV_CODE_GetVersusCompletion", (void**)&m_pCompletion);
 	if( !m_pMarkers || !m_pL4DStats || !m_pCompletion ) {
@@ -62,25 +60,43 @@ void ScoreCode::Patch() {
 
 	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
 
+	// TODO: move UpdateMarkersReached_patch to gamedata 'UpdateMarkersReached_replace' and replace TEAM_SIZE by 0x2B placeholder
+	// TODO: <key>_replace support
+	// TODO: verify <key>_patt
+
 	// prepare the trampoline
 	m_injectMarker = (unsigned char *)sengine->AllocatePageMemory(sizeof(UpdateMarkersReached_patch) + OP_JMP_SIZE);
 	copy_bytes(UpdateMarkersReached_patch, m_injectMarker, sizeof(UpdateMarkersReached_patch));
 	inject_jmp(m_injectMarker + sizeof(UpdateMarkersReached_patch), m_pMarkers + OP_JMP_SIZE); // inject jump to position afterward JMP which brought us here
 
 	// copy original code to our buffer
-	SetMemPatchable(m_pMarkers, sizeof(UpdateMarkersReached_orig));
-	copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig));
-	// inject jmp to trampoline and nop some bytes after target instruction
-	inject_jmp(m_pMarkers, m_injectMarker);
-	fill_nop(m_pMarkers + OP_JMP_SIZE, sizeof(UpdateMarkersReached_orig) - OP_JMP_SIZE);
+	const char* patt_UpdateMarkersReached = g_pGameConf->GetKeyValue("UpdateMarkersReached_patt");
+	if( !patt_UpdateMarkersReached ) {
+		g_pSM->LogError(myself, "Can't get UpdateMarkersReached_patt");
+		return;
+	}
+	m_restoreMarker.bytes = UTIL_DecodeHexString(m_restoreMarker.patch, sizeof(m_restoreMarker.patch), patt_UpdateMarkersReached);
+	assert(m_restoreMarker.bytes <= sizeof(m_restoreMarker.patch));
 
-	// // before patch copy original code to our buffer
-	SetMemPatchable(m_pL4DStats, sizeof(AddSurvivorStats_orig));
+	SetMemPatchable(m_pMarkers, m_restoreMarker.bytes);
+	copy_bytes(m_pMarkers, m_restoreMarker.patch, m_restoreMarker.bytes);
+
+	// inject jmp to trampoline
+	inject_jmp(m_pMarkers, m_injectMarker);
+
+	const char* nop_UpdateMarkersReached = g_pGameConf->GetKeyValue("UpdateMarkersReached_nop");
+	if (nop_UpdateMarkersReached && nop_UpdateMarkersReached[0] == '1')
+	{
+		fill_nop(m_pMarkers + OP_JMP_SIZE, m_restoreMarker.bytes - OP_JMP_SIZE);
+	}
+
+	// before patch copy original code to our buffer
+	SetMemPatchable(m_pL4DStats, sizeof(AddSurvivorStats_patch));
 	copy_bytes(m_pL4DStats, AddSurvivorStats_orig, sizeof(AddSurvivorStats_orig));
 	copy_bytes(AddSurvivorStats_patch, m_pL4DStats, sizeof(AddSurvivorStats_patch));
 
-	// // before patch copy original code to our buffer
-	SetMemPatchable(m_pCompletion, sizeof(GetVersusCompletion_orig));
+	// before patch copy original code to our buffer
+	SetMemPatchable(m_pCompletion, sizeof(GetVersusCompletion_patch));
 	copy_bytes(m_pCompletion, GetVersusCompletion_orig, sizeof(GetVersusCompletion_orig));
 	copy_bytes(GetVersusCompletion_patch, m_pCompletion, sizeof(GetVersusCompletion_patch));
 
@@ -91,9 +107,13 @@ void ScoreCode::Unpatch() {
 	if(!m_isPatched) return;
 
 	ISourcePawnEngine *sengine = g_pSM->GetScriptingEngine();
-	if(m_injectMarker) { copy_bytes(m_pMarkers, UpdateMarkersReached_orig, sizeof(UpdateMarkersReached_orig)); sengine->FreePageMemory(m_injectMarker); }
-	copy_bytes(m_pL4DStats, AddSurvivorStats_orig, sizeof(AddSurvivorStats_orig));
-	copy_bytes(m_pCompletion, GetVersusCompletion_orig, sizeof(GetVersusCompletion_orig));
+	if(m_injectMarker) {
+		copy_bytes(m_restoreMarker.patch, m_pMarkers, m_restoreMarker.bytes);
+		sengine->FreePageMemory(m_injectMarker);
+		m_injectMarker = nullptr;
+	}
+	copy_bytes(AddSurvivorStats_orig, m_pL4DStats, sizeof(AddSurvivorStats_orig));
+	copy_bytes(GetVersusCompletion_orig, m_pCompletion, sizeof(GetVersusCompletion_orig));
 
 	m_isPatched = false;
 }

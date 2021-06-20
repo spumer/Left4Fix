@@ -37,6 +37,8 @@
  * @brief Sample extension code header.
  */
 
+#define GAMECONFIG_FILE "left4fix.sig"
+
 #ifdef _DEBUG
 #define L4D_DEBUG_LOG(...) g_pSmmAPI->ConPrintf(__VA_ARGS__);g_pSmmAPI->ConPrint("\n")
 #else
@@ -135,6 +137,8 @@ public:
 	 */
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
 #endif
+
+	static void OnEnableCheckpointIncapChange(IConVar *pConVar, const char *pOldValue, float flOldValue);
 };
 
 extern IGameConfig *g_pGameConf;
