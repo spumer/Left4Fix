@@ -68,6 +68,7 @@ project.sources += [
     'util.cpp',
     'routine.cpp',
     os.path.join('sdk', 'smsdk_ext.cpp'),
+    os.path.join(build_info.sm_root, 'public', 'CDetour', 'detours.cpp'),
     os.path.join(build_info.sm_root, 'public', 'asm', 'asm.c'),
 ]
 
