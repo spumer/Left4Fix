@@ -1,7 +1,7 @@
 Linux:
 -----------------------------------------------------------------------------------------------------
-Tiebreaker patch: C7 44 24 04 02 00 00 00 89 04 24 E8 ? ? ? ? C7 44 24 04 03 00 00 00 89 C7 A1
-\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC7\xA1
+Tiebreaker patch: C7 44 24 04 02 00 00 00 89 04 24 E8 ? ? ? ? C7 44 24 04 03 00 00 00 89 C6 A1
+\xC7\x44\x24\x04\x02\x00\x00\x00\x89\x04\x24\xE8\x2A\x2A\x2A\x2A\xC7\x44\x24\x04\x03\x00\x00\x00\x89\xC6\xA1
 Need nop length: 104
 -----------------------------------------------------------------------------------------------------
 
@@ -13,8 +13,9 @@ Tiebreaker patch: 6A 02 E8 ? ? ? ? 8B ? ? ? ? ? 6A 03 8B F0
 Need nop length: 62
 -----------------------------------------------------------------------------------------------------
 
+Available to reuse:
 
-Linux: EAX, EBX, EDI, DWORD PTR [ebp-0x3c] (allocaded on stack var)
+Linux: EAX, ESI, EDI, DWORD PTR [ebp-0x3c] (allocaded on stack var)
 Windows: EAX, EBX, ECX, ESI, DWORD PTR [ebp-4] (allocaded on stack var)
 
 Linux: EAX initializated with g_pGameRules when we entered to section
@@ -23,19 +24,19 @@ Windows: ECX initializated with g_pGameRules when we entered to section
 
 Linux:
 -----------------------------------------------------------------------------------------------------
-89 c3                   (mov ebx, eax)                     /* Save g_pGameRules to EBX */
+89 c6                   (mov esi, eax)                     /* Save g_pGameRules to ESI */
 c7 44 24 04 01 00 00 00 (mov dword ptr [esp+4], 1)         /* Put to stack first team number (int) */
-89 1c 24                (mov [esp], ebx)                   /* Put to stack g_pGameRules pointer */
+89 34 24                (mov [esp], esi)                   /* Put to stack g_pGameRules pointer */
 e8 ? ? ? ?              (call ? ? ? ?)                     /* call GetChapterScore(int) */
 89 45 c4                (mov DWORD PTR [ebp-0x3c], eax)    /* Save result to local variable */
 c7 44 24 04 02 00 00 00 (mov dword ptr [esp+4], 2)         /* Put to stack second team number (int) */
-89 1c 24                (mov [esp], ebx)                   /* Put to stack g_pGameRules pointer */
+89 34 24                (mov [esp], ebx)                   /* Put to stack g_pGameRules pointer */
 e8 ? ? ? ?              (call ? ? ? ?)                     /* call GetChapterScore(int) */
 
 Result: {
-    0x89, 0xC3, 0xC7, 0x44, 0x24, 0x04, 0x01, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
+    0x89, 0xC6, 0xC7, 0x44, 0x24, 0x04, 0x01, 0x00, 0x00, 0x00, 0x89, 0x34, 0x24,
     0xE8, 0xFF, 0xFF, 0xFF, 0xFF,
-    0x89, 0x45, 0xC4, 0xC7, 0x44, 0x24, 0x04, 0x02, 0x00, 0x00, 0x00, 0x89, 0x1C, 0x24,
+    0x89, 0x45, 0xC4, 0xC7, 0x44, 0x24, 0x04, 0x02, 0x00, 0x00, 0x00, 0x89, 0x34, 0x24,
     0xE8, 0xFF, 0xFF, 0xFF, 0xFF
 }
 -----------------------------------------------------------------------------------------------------

@@ -1,0 +1,106 @@
+import fnmatch
+import os.path
+import pathlib
+
+import typing
+
+if typing.TYPE_CHECKING:
+    from ambuild2.frontend.v2_0.context import Context
+    builder: Context
+
+
+projectName = 'left4fix'
+
+
+def listdir(
+    path: typing.Union[pathlib.Path, str],
+    *,
+    include: typing.List[str] = None,
+    exclude: typing.List[str] = None,
+):
+    """List folder and apply include/exclude filters
+
+    if `include` specified then only this files will appear in result
+    if `exclude` specified then matched files will be excluded from result
+
+    :param path: path to list
+    :param include: file names or masks to match
+    :param exclude: file names or masks to match
+    :return: list with matches
+    """
+
+    if include and exclude:
+        if set(include) & set(exclude):
+            raise RuntimeError(
+                f'include and exclude can not intersect: {include} & {exclude}',
+            )
+
+    if not isinstance(path, pathlib.Path):
+        path = pathlib.Path(path)
+
+    matches = list(path.iterdir())
+    if include is not None:
+        matches = [
+            m for m in matches
+            for patt in include
+            if fnmatch.fnmatch(m, patt)
+        ]
+
+    if exclude is not None:
+        matches = [
+            m for m in matches
+            for patt in exclude
+            if not fnmatch.fnmatch(m, patt)
+        ]
+
+    return [m.resolve() for m in matches]
+
+
+def _p(*args):
+    """Shortcut to prepend current path"""
+    return os.path.join(builder.currentSourcePath, *args)
+
+
+project = build_info.HL2Project(builder, projectName + '.ext')
+project.sources += [
+    'extension.cpp',
+    'natives.cpp',
+    'util.cpp',
+    'routine.cpp',
+    os.path.join('sdk', 'smsdk_ext.cpp'),
+    os.path.join(build_info.sm_root, 'public', 'CDetour', 'detours.cpp'),
+    os.path.join(build_info.sm_root, 'public', 'asm', 'asm.c'),
+]
+
+project.sources += listdir(_p('detours'), include=['*.cpp'])
+
+if builder.target_platform == 'windows':
+    project.sources += listdir(
+        _p('codepatch'),
+        include=['*.cpp'],
+        exclude=['*_linux.cpp'],
+    )
+else:
+    assert builder.target_platform == 'linux'
+    project.sources += listdir(
+        _p('codepatch'),
+        include=['*.cpp'],
+        exclude=['*_win32.cpp'],
+    )
+
+# sm1.10+
+libudis_folder = os.path.join(build_info.sm_root, 'public', 'libudis86')
+if os.path.isdir(libudis_folder):
+    project.sources += [
+        os.path.join(libudis_folder, 'decode.c'),
+        os.path.join(libudis_folder, 'itab.c'),
+        os.path.join(libudis_folder, 'syn-att.c'),
+        os.path.join(libudis_folder, 'syn-intel.c'),
+        os.path.join(libudis_folder, 'syn.c'),
+        os.path.join(libudis_folder, 'udis86.c'),
+    ]
+
+for sdk in build_info.sdks.values():
+    build_info.HL2Config(project, projectName + '.ext.2.' + sdk.short_name, sdk)
+
+build_info.extensions += builder.Add(project)

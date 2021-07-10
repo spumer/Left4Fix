@@ -1,0 +1,52 @@
+import os.path
+import pathlib
+import typing
+
+
+if typing.TYPE_CHECKING:
+    from ambuild2.frontend.v2_2.context import BuildContext
+    builder: BuildContext
+
+
+# This is where the files will be output to
+# package is the default
+# noinspection PyUnboundLocalVariable
+builder.SetBuildFolder('package')
+
+
+_folder_map = {}
+
+
+def add_folder(path):
+    # Create the distribution folder hierarchy
+
+    if not isinstance(path, pathlib.Path):
+        path = pathlib.Path(path)
+
+    path = path.resolve()
+
+    if path not in _folder_map:
+        _folder_map[path] = builder.AddFolder(path.as_posix())
+
+    return _folder_map[path]
+
+
+# Do all straight-up file copies from the source tree
+def CopyFiles(src, dest, files):
+    if not dest:
+        dest = src
+    dest_entry = add_folder(dest)
+    for source_file in files:
+        source_path = os.path.join(builder.sourcePath, src, source_file)
+        builder.AddCopy(source_path, dest_entry)
+
+
+# Copy extension
+extensions_folder = add_folder('addons/sourcemod/extensions')
+for cxx_task in build_info.extensions:
+    builder.AddCopy(cxx_task.binary, extensions_folder)
+
+CopyFiles('scripting', 'addons/sourcemod/scripting/include', ['left4fix.inc'])
+
+# Gamedata file
+CopyFiles('gamedata', 'addons/sourcemod/gamedata', ['left4fix.sig.txt'])

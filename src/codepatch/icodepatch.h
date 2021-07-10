@@ -29,8 +29,23 @@
  * Version: $Id$
  */
 
+#include <stddef.h>
+
 #ifndef _INCLUDE_SOURCEMOD_ICODEPATCH_H_
 #define _INCLUDE_SOURCEMOD_ICODEPATCH_H_
+
+
+template<size_t TSize>
+struct dynamic_patch_t
+{
+	dynamic_patch_t()
+	{
+		patch[0] = 0;
+		bytes = 0;
+	}
+	unsigned char patch[TSize];
+	size_t bytes;
+};
 
 /*
 A simple interface for a patch that can change code memory or restore it to the original state

@@ -29,7 +29,7 @@
  * Version: $Id$
  */
 
-#include "asm/asm.h"
+#include <asm/asm.h>
 #include "detour_function.h"
 #include "CDetour/detourhelpers.h"
 

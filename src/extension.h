@@ -32,10 +32,19 @@
 #ifndef _INCLUDE_LEFT4FIX_PROPER_H_
 #define _INCLUDE_LEFT4FIX_PROPER_H_
 
+// include these before smsdk_ext.h to let use debugging versions of the memory allocators (Windows only)
+// sourcetvsupport/issues/6, sourcetvsupport/issues/14
+#include "sdk/public/tier1/mempool.h"
+#include "sdk/engine/packed_entity.h"
+
+
 /**
  * @file extension.h
  * @brief Sample extension code header.
  */
+
+#define GAMECONFIG_FILE "left4fix.sig"
+#define GAMEDATA_FILE GAMECONFIG_FILE
 
 #ifdef _DEBUG
 #define L4D_DEBUG_LOG(...) g_pSmmAPI->ConPrintf(__VA_ARGS__);g_pSmmAPI->ConPrint("\n")
@@ -43,7 +52,7 @@
 #define L4D_DEBUG_LOG(...)
 #endif
 
-#include "smsdk_ext.h"
+#include "sdk/smsdk_ext.h"
 #include "util.h"
 #include <iplayerinfo.h>
 #include <vector.h> // for Vector class
@@ -135,6 +144,8 @@ public:
 	 */
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
 #endif
+
+    bool CreateDetours(char* error, size_t maxlength);
 };
 
 extern IGameConfig *g_pGameConf;

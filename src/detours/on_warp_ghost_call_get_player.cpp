@@ -29,9 +29,9 @@
  * Version: $Id$
  */
 
+#include <asm/asm.h>
 #include "extension.h"
 
-#include "asm/asm.h"
 #include "CDetour/detourhelpers.h"
 #include "on_warp_ghost_call_get_player.h"
 
@@ -81,8 +81,8 @@ namespace Detours
 			return nullptr;
 		}
 
-		if( !g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter", &offset) || !offset ) {
-			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_GetPlayerByCharacter' offset");
+		if( !g_pGameConf->GetOffset("WarpGhostToInitialPosition__GetPlayerByCharacter", &offset) || !offset ) {
+			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhostToInitialPosition__GetPlayerByCharacter' offset");
 			return nullptr;
 		}
 		pGetPlayerCall += offset;
@@ -100,8 +100,8 @@ namespace Detours
 			return nullptr;
 		}
 
-		if( !g_pGameConf->GetOffset("WarpGhost_GetPlayerByCharacter_inline_len", &need_nop) || !need_nop ) {
-			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhost_GetPlayerByCharacter_inline_len' offset");
+		if( !g_pGameConf->GetOffset("WarpGhostToInitialPosition__GetPlayerByCharacter_inline_len", &need_nop) || !need_nop ) {
+			g_pSM->LogError(myself, "WarpGhost -- Could not find 'WarpGhostToInitialPosition__GetPlayerByCharacter_inline_len' offset");
 			return nullptr;
 		}
 		assert(static_cast<size_t>(need_nop) >= sizeof(push_arg) + OP_CALL_SIZE + sizeof(cleanup_stack));

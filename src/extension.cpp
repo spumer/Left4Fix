@@ -30,6 +30,7 @@
  */
 
 #include "extension.h"
+#include "wrappers.h"
 #include <igameevents.h>
 
 #include "codepatch/patchmanager.h"
@@ -45,7 +46,20 @@
 #include "event_player_death.hpp"
 #include "event_round_start.hpp"
 
-#define GAMECONFIG_FILE "left4fix.sig"
+#include <CDetour/detours.h>
+
+
+DETOUR_DECL_MEMBER0(Handler_CFrameSnapshotManager_LevelChanged, void)
+{
+	CFrameSnapshotManager* _this = reinterpret_cast<CFrameSnapshotManager*>(this);
+
+	// bug##: Underlying method CClassMemoryPool::Clear creates CUtlRBTree with insufficient iterator size (unsigned short)
+	// memory object of which fails to iterate over more than 65535 of packed entities
+	_this->m_PackedEntitiesPool().Clear();
+
+	// CFrameSnapshotManager::m_PackedEntitiesPool shouldn't have elements to free from now on
+	DETOUR_MEMBER_CALL(Handler_CFrameSnapshotManager_LevelChanged)();
+}
 
 /**
  * @file extension.cpp
@@ -74,7 +88,7 @@ namespace Detours {
 /* Interfaces */
 IGameConfig *g_pGameConf = NULL;
 ISmmAPI *g_pSmmAPI = NULL;
-ICvar *icvar = NULL;
+ICvar *g_pCVar = NULL;
 IGameEventManager2 *gameevents = NULL;
 
 SMEXT_LINK(&g_Left4Fix);
@@ -148,6 +162,13 @@ bool Left4Fix::SDK_OnLoad(char *error, size_t maxlength, bool late) {
 
 	Detour::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
 
+    if (!CreateDetours(error, maxlength))
+    {
+        return false;
+    }
+
+    CFrameSnapshotManager::detour_LevelChanged->EnableDetour();
+
 	return true;
 }
 
@@ -165,6 +186,12 @@ void Left4Fix::SDK_OnAllLoaded() {
 }
 
 void Left4Fix::SDK_OnUnload() {
+
+	if (CFrameSnapshotManager::detour_LevelChanged != NULL) {
+		CFrameSnapshotManager::detour_LevelChanged->Destroy();
+		CFrameSnapshotManager::detour_LevelChanged = NULL;
+	}
+
 	g_PatchManager.UnregisterAll();
 	gameconfs->CloseGameConfigFile(g_pGameConf);
 }
@@ -172,7 +199,7 @@ void Left4Fix::SDK_OnUnload() {
 bool Left4Fix::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool late) {
 	g_pSmmAPI = ismm;
 
-	GET_V_IFACE_CURRENT(GetEngineFactory, icvar, ICvar, CVAR_INTERFACE_VERSION);
+	GET_V_IFACE_CURRENT(GetEngineFactory, g_pCVar, ICvar, CVAR_INTERFACE_VERSION);
 	GET_V_IFACE_CURRENT(GetEngineFactory, gameevents, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
 	gpGlobals = g_pSmmAPI->GetCGlobals();
 	return true;
@@ -181,6 +208,65 @@ bool Left4Fix::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool
 bool Left4Fix::SDK_OnMetamodUnload(char *error, size_t maxlength) {
 	return true;
 }
+
+
+int CFrameSnapshotManager::offset_m_PackedEntitiesPool = 0;
+void* CFrameSnapshotManager::pfn_LevelChanged = NULL;
+CDetour* CFrameSnapshotManager::detour_LevelChanged = NULL;
+
+
+bool Left4Fix::CreateDetours(char* error, size_t maxlength)
+{
+    CDetourManager::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
+    IGameConfig* gc = g_pGameConf;
+
+    static const struct {
+		const char* key;
+		int& offset;
+	} s_offsets[] = {
+		{ "CFrameSnapshotManager::m_PackedEntitiesPool", CFrameSnapshotManager::offset_m_PackedEntitiesPool },
+	};
+
+	for (auto&& el : s_offsets) {
+		if (!gc->GetOffset(el.key, &el.offset)) {
+			UTIL_Format(error, maxlength, "Unable to get offset for \"%s\" from game config (file: \"" GAMEDATA_FILE ".txt\")", el.key);
+			return false;
+		}
+	}
+
+	static const struct {
+		const char* key;
+		void*& address;
+	} s_sigs[] = {
+		{ "CFrameSnapshotManager::LevelChanged", CFrameSnapshotManager::pfn_LevelChanged },
+	};
+
+	for (auto&& el : s_sigs) {
+		if (!gc->GetMemSig(el.key, &el.address)) {
+			UTIL_Format(error, maxlength, "Unable to find signature for \"%s\" from game config (file: \"" GAMEDATA_FILE ".txt\")", el.key);
+
+			return false;
+		}
+
+		if (el.address == NULL) {
+			UTIL_Format(error, maxlength, "Sigscan for \"%s\" failed (game config file: \"" GAMEDATA_FILE ".txt\")", el.key);
+
+			return false;
+		}
+	}
+
+	CFrameSnapshotManager::detour_LevelChanged = DETOUR_CREATE_MEMBER(Handler_CFrameSnapshotManager_LevelChanged, CFrameSnapshotManager::pfn_LevelChanged);
+	if (CFrameSnapshotManager::detour_LevelChanged == NULL) {
+		UTIL_Format(error, maxlength, "Unable to create a detour for \"CFrameSnapshotManager::LevelChanged\"");
+		return false;
+	}
+
+    return true;
+}
+
+//
+
+
 /*
                                                  dd
                                            dd

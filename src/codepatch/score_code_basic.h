@@ -39,6 +39,7 @@ private:
 	bool m_isPatched;
 	unsigned char *m_pCompletion, *m_pMarkers, *m_pL4DStats;
 	unsigned char *m_injectMarker, *m_injectStats, *m_injectCompl;
+	dynamic_patch_t<128> m_restoreMarker;
 public:
 	ScoreCode() : m_isPatched(false), m_pCompletion(0), m_pMarkers(0), m_pL4DStats(0),
 					m_injectMarker(0), m_injectStats(0), m_injectCompl(0) {}
