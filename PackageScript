@@ -4,7 +4,7 @@ import typing
 
 
 if typing.TYPE_CHECKING:
-    from ambuild2.frontend.v2_2.context import BuildContext
+    from ambuild2.frontend.v2_0.context import BuildContext
     builder: BuildContext
 
 
@@ -23,10 +23,8 @@ def add_folder(path):
     if not isinstance(path, pathlib.Path):
         path = pathlib.Path(path)
 
-    path = path.resolve().relative_to(builder.sourcePath)
-
     if path not in _folder_map:
-        _folder_map[path] = builder.AddFolder(path)
+        _folder_map[path] = builder.AddFolder(path.as_posix())
 
     return _folder_map[path]
 
