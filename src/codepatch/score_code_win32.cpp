@@ -52,7 +52,8 @@ unsigned char GetVersusCompletion_patch[] = { 0xB9, TEAM_SIZE, 0x00, 0x00, 0x00,
 void ScoreCode::Patch() {
 	if(m_isPatched) return;
 
-	g_pGameConf->GetMemSig("DIV_CODE_UpdateMarkersReached", (void **)&m_pMarkers);
+	// TODO: Merge with score_code_linux.cpp
+	g_pGameConf->GetMemSig("UpdateMarkersReached_search", (void **)&m_pMarkers);
 	g_pGameConf->GetMemSig("DIV_CODE_AddSurvivorStats", (void **)&m_pL4DStats);
 	g_pGameConf->GetMemSig("DIV_CODE_GetVersusCompletion", (void**)&m_pCompletion);
 	if( !m_pMarkers || !m_pL4DStats || !m_pCompletion ) {
