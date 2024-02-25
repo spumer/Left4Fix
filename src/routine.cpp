@@ -34,15 +34,30 @@
 #define GET_FIRST_EMPTY_ELEMENT(E)	while( E->m_Pos.x ) ++E
 
 void r_nowAlive(const Vector& position, death_info_t *data, size_t len) {
+	L4D_DEBUG_LOG("r_nowAlive: %f.%f.%f", position.x, position.y, position.z);
 	death_info_t *begin = data;
-	for(; static_cast<size_t>(data - begin) < len; ++data)
-		if(data->m_Pos.DistTo(position) < 5.0) {
-			memset(data, 0, sizeof(death_info_t));
-			break;
-		}
+	death_info_t *nearest = NULL;
+
+	float min_distance = 999999;
+	for(; static_cast<size_t>(data - begin) < len; ++data){
+		if (data->m_DeathDist == 0) continue;
+		float dist = data->m_Pos.DistTo(position);
+		L4D_DEBUG_LOG("data->m_Pos.DistTo(position): %f", dist);
+
+		if (dist > min_distance) continue;
+		min_distance = dist;
+		nearest = data;
+	}
+
+	if(nearest) {
+		L4D_DEBUG_LOG("RESET SCORE AT: %f.%f.%f", nearest->m_Pos.x, nearest->m_Pos.y, nearest->m_Pos.z);
+		memset(nearest, 0, sizeof(death_info_t));
+	}
+
 }
 
 void r_nowDead(const Vector& position, uint32_t score, death_info_t *data) {
+	L4D_DEBUG_LOG("r_nowDead: %f.%f.%f", position.x, position.y, position.z);
 	GET_FIRST_EMPTY_ELEMENT(data);
 	data->m_Pos = position;
 	data->m_DeathDist = score;
