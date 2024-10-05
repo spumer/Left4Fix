@@ -140,7 +140,7 @@ jobs:
           ambuild
 
       - name: Uploading package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: left4fix-${{ matrix.team_size }}players-sm${{ matrix.sm_version }}-${{ matrix.os_short }}-${{ env.GITHUB_SHA_SHORT }}
           path: Left4Fix/build/package
