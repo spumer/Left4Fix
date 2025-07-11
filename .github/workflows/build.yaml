@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
           - windows-latest
 
         team_size:
@@ -50,7 +50,7 @@ jobs:
           - sm_version: "1.6"
             sm_branch: "1.6-dev"
 
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             os_short: linux
 
           - os: windows-latest
